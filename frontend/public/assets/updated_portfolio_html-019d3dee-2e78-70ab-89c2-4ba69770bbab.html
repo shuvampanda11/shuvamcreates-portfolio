@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>@shuvamcreates | Web Designer</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{
+background:black;
+color:#fff;
+}
+
+/* NAVBAR */
+.navbar{
+display:flex;justify-content:space-between;align-items:center;
+padding:25px 70px;background:rgba(0,0,0,0.6);
+backdrop-filter:blur(10px);position:fixed;width:100%;
+}
+.logo{font-weight:700;font-size:22px;color:#fff;}
+.navbar a{text-decoration:none;margin:0 15px;color:#ddd;font-weight:500;}
+
+/* HERO */
+.hero{
+height:100vh;
+display:flex;
+align-items:center;
+padding:120px 90px;
+background:url('ChatGPT Image Feb 8, 2026, 01_13_06 PM.png') no-repeat center center/cover;
+position:relative;
+}
+
+.hero::after{
+content:"";
+position:absolute;
+top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.6);
+}
+
+.hero-text{
+position:relative;
+z-index:2;
+max-width:500px;
+}
+
+.hero-text h1{font-size:70px;line-height:1.05;}
+.hero-text p{margin-top:20px;color:#ccc;}
+
+.cta{
+margin-top:30px;padding:14px 28px;border:none;border-radius:30px;
+background:#fff;color:#000;font-weight:600;
+cursor:pointer;
+text-decoration:none;
+display:inline-block;
+}
+
+/* OTHER SECTIONS */
+section{background:#111;}
+
+.services,.projects,.skills,.about{
+padding:100px 90px;
+}
+
+.service-grid{display:flex;gap:30px;margin-top:40px;}
+.service{
+background:#1a1a1a;padding:30px;border-radius:18px;
+}
+
+.project-card{
+display:flex;gap:40px;align-items:center;background:#1a1a1a;
+padding:30px;border-radius:20px;
+}
+.project-card img{width:420px;border-radius:15px;}
+
+.skills{text-align:center;}
+.skill-list span{
+display:inline-block;margin:10px;padding:12px 22px;
+background:#222;border-radius:25px;
+}
+
+.about{text-align:center;max-width:800px;margin:auto;}
+.about p{margin:20px 0;color:#aaa;line-height:1.7;}
+
+.contact{
+padding:120px 90px;text-align:center;background:#000;color:white;
+}
+.contact-info p{margin:10px 0;color:#ccc;}
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+<h2 class="logo">@shuvamcreates</h2>
+<nav>
+<a href="#">Home</a>
+<a href="#">Services</a>
+<a href="#">Work</a>
+<a href="https://www.instagram.com/_shuvamcreates?igsh=aGQwbTAyZXd3dnR4" target="_blank">Instagram</a>
+</nav>
+</header>
+
+<section class="hero">
+<div class="hero-text">
+<h1>designing<br>digital<br>experiences.</h1>
+<p>I'm Shuvam Panda — a creative web designer crafting modern,
+fast and premium websites for brands and creators.</p>
+<a href="https://photography-studio-1dd.caffeine.xyz" target="_blank" class="cta">View My Work</a>
+</div>
+</section>
+
+<section class="services">
+<h2>What I Do</h2>
+<div class="service-grid">
+<div class="service">
+<h3>Website Design</h3>
+<p>Modern UI/UX focused website designs tailored for brands and creators.</p>
+</div>
+<div class="service">
+<h3>Frontend Development</h3>
+<p>Fast, responsive websites built using clean HTML and CSS.</p>
+</div>
+<div class="service">
+<h3>Portfolio Websites</h3>
+<p>Premium personal and business portfolios that attract clients.</p>
+</div>
+</div>
+</section>
+
+<section class="projects">
+<h2>Selected Work</h2>
+<div class="project-card">
+<img src="https://via.placeholder.com/420x260" alt="Project">
+<div>
+<h3>Photography Portfolio Website</h3>
+<p>Designed and developed a premium portfolio website for a professional photographer with modern UI and responsive layout.</p>
+</div>
+</div>
+</section>
+
+<section class="skills">
+<h2>Skills & Tools</h2>
+<div class="skill-list">
+<span>HTML</span>
+<span>CSS</span>
+<span>JavaScript</span>
+<span>Responsive Design</span>
+<span>UI Design</span>
+<span>Figma</span>
+</div>
+</section>
+
+<section class="about">
+<h2>About Me</h2>
+<p>Great design is not just about how a website looks — it's about how it works,
+how it feels, and how it connects people with ideas.</p>
+<p>Hi, I'm <strong>Shuvam Panda</strong>, a creative web designer passionate about
+building clean, modern, and user-focused websites.</p>
+</section>
+
+<section class="contact">
+<h2>Let's Work Together</h2>
+<p>Have a project in mind? Let's build something amazing together.</p>
+<div class="contact-info">
+<p><strong>Email:</strong> shuvam.panda2@gmail.com</p>
+<p><strong>Phone:</strong> +91 9692504800</p>
+</div>
+<a href="https://www.instagram.com/_shuvamcreates?igsh=aGQwbTAyZXd3dnR4" target="_blank" class="cta">Hire Me</a>
+</section>
+
+</body>
+</html>
