@@ -430,6 +430,10 @@
   color: #fff;
 }
 
+.whatsapp-link:hover {
+  color: #25d366;
+}
+
 /* FOOTER */
 .footer {
   background: #000;
@@ -448,6 +452,160 @@
 
 .footer-link:hover {
   color: #fff;
+}
+
+/* HIRE ME MODAL */
+.hire-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.hire-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.hire-modal {
+  position: relative;
+  z-index: 1;
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 40px 36px 36px;
+  width: 100%;
+  max-width: 440px;
+  margin: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px
+    rgba(255, 255, 255, 0.04);
+}
+
+.hire-modal-inner {
+  /* inner animation wrapper */
+}
+
+.hire-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  color: #aaa;
+  font-size: 15px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.hire-modal-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.hire-modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #fff;
+}
+
+.hire-modal-sub {
+  color: #888;
+  font-size: 14px;
+  margin: 0 0 28px;
+  line-height: 1.5;
+}
+
+.hire-modal-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.hire-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hire-option:hover {
+  transform: translateY(-3px);
+}
+
+.hire-option--whatsapp {
+  background: rgba(37, 211, 102, 0.08);
+  color: #25d366;
+  border-color: rgba(37, 211, 102, 0.2);
+}
+
+.hire-option--whatsapp:hover {
+  background: rgba(37, 211, 102, 0.14);
+  border-color: rgba(37, 211, 102, 0.4);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.15);
+}
+
+.hire-option--instagram {
+  background: rgba(225, 48, 108, 0.08);
+  color: #e1306c;
+  border-color: rgba(225, 48, 108, 0.2);
+}
+
+.hire-option--instagram:hover {
+  background: rgba(225, 48, 108, 0.14);
+  border-color: rgba(225, 48, 108, 0.4);
+  box-shadow: 0 8px 24px rgba(225, 48, 108, 0.15);
+}
+
+.hire-option-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hire-option-label {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.hire-option-sub {
+  font-size: 12px;
+  opacity: 0.7;
+  text-align: center;
+  line-height: 1.4;
+}
+
+@media (max-width: 420px) {
+  .hire-modal {
+    padding: 32px 20px 28px;
+  }
+  .hire-modal-options {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ============================
