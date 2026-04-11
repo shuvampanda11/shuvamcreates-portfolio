@@ -1,16 +1,244 @@
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { type RefObject, useEffect, useRef, useState } from "react";
+
+/* ── Background Slideshow Images ── */
+const SLIDESHOW_IMAGES = [
+  "/assets/images/tyson-herrman-snc-m8kfqkk-unsplash-019d7b60-6b34-7053-a0c3-37eec659c405.jpg",
+  "/assets/images/andrew-neel-cckf4tshauw-unsplash-019d7b60-91c4-7549-a0f8-c2896ffa7ab1.jpg",
+  "/assets/images/carl-heyerdahl-ke0nc8-58mq-unsplash-019d7b60-9433-7475-91b3-42a4233f5707.jpg",
+  "/assets/images/fia-yang-ajxrh39kntc-unsplash-019d7b60-97ff-7485-99a8-6b9bb4e7720a.jpg",
+  "/assets/images/brian-patrick-tagalog-_8hgfbxwd0a-unsplash-019d7b61-0ae7-756f-aa0a-d1b428e756cb.jpg",
+];
+
+/* ── Typing Effect Hook ── */
+const TYPING_LINES = [
+  "brands that sell.",
+  "ads that convert.",
+  "logos that last.",
+];
+const TYPE_SPEED = 80; // ms per character — typing
+const ERASE_SPEED = 40; // ms per character — erasing (faster = snappier)
+const HOLD_PAUSE = 900; // ms to hold the completed word before erasing
+const LINE_PAUSE = 200; // ms gap between erase-end and next word start
+
+function useTypingEffect() {
+  const [displayed, setDisplayed] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    async function wait(ms: number) {
+      await new Promise<void>((res) => setTimeout(res, ms));
+    }
+
+    async function run() {
+      let li = 0;
+      while (active) {
+        const target = TYPING_LINES[li] ?? "";
+
+        // Type forward
+        for (let ci = 1; ci <= target.length; ci++) {
+          if (!active) return;
+          setDisplayed(target.slice(0, ci));
+          await wait(TYPE_SPEED);
+        }
+
+        // Hold at full word
+        await wait(HOLD_PAUSE);
+        if (!active) return;
+
+        // Erase backward
+        for (let ci = target.length - 1; ci >= 0; ci--) {
+          if (!active) return;
+          setDisplayed(target.slice(0, ci));
+          await wait(ERASE_SPEED);
+        }
+
+        // Brief pause before next word
+        await wait(LINE_PAUSE);
+        if (!active) return;
+
+        // Advance to next word
+        li = (li + 1) % TYPING_LINES.length;
+      }
+    }
+
+    void run();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return displayed;
+}
 
 const INSTAGRAM_URL =
   "https://www.instagram.com/_shuvamcreates?igsh=aGQwbTAyZXd3dnR4";
 const WHATSAPP_URL = "https://wa.me/919692504800";
 const WORK_URL = "https://photography-studio-1dd.caffeine.xyz";
 
+/* ── Floating Particles ── */
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  r: number;
+}
+
+function useParticleCanvas(canvasRef: RefObject<HTMLCanvasElement | null>) {
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const PARTICLE_COUNT = 90;
+    const CONNECTION_DIST = 120;
+    const SPEED_MIN = 0.3;
+    const SPEED_MAX = 0.8;
+    // soft purple/violet matching portfolio accent
+    const PARTICLE_COLOR = "rgba(160, 120, 255,";
+    const LINE_COLOR = "rgba(180, 140, 255,";
+
+    let particles: Particle[] = [];
+    let animId: number;
+    let w = 0;
+    let h = 0;
+
+    function resize() {
+      if (!canvas) return;
+      w = canvas.width = canvas.offsetWidth;
+      h = canvas.height = canvas.offsetHeight;
+    }
+
+    function randBetween(a: number, b: number) {
+      return a + Math.random() * (b - a);
+    }
+
+    function initParticles() {
+      particles = Array.from({ length: PARTICLE_COUNT }, () => {
+        const speed = randBetween(SPEED_MIN, SPEED_MAX);
+        const angle = Math.random() * Math.PI * 2;
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          r: randBetween(2, 3),
+        };
+      });
+    }
+
+    function draw() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, w, h);
+
+      // update positions + bounce
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) {
+          p.x = 0;
+          p.vx *= -1;
+        }
+        if (p.x > w) {
+          p.x = w;
+          p.vx *= -1;
+        }
+        if (p.y < 0) {
+          p.y = 0;
+          p.vy *= -1;
+        }
+        if (p.y > h) {
+          p.y = h;
+          p.vy *= -1;
+        }
+      }
+
+      // draw connection lines
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i];
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < CONNECTION_DIST) {
+            const alpha = (1 - dist / CONNECTION_DIST) * 0.35;
+            ctx.beginPath();
+            ctx.strokeStyle = `${LINE_COLOR}${alpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // draw particles
+      for (const p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `${PARTICLE_COLOR}0.75)`;
+        ctx.fill();
+      }
+
+      animId = requestAnimationFrame(draw);
+    }
+
+    resize();
+    initParticles();
+    draw();
+
+    const onResize = () => {
+      cancelAnimationFrame(animId);
+      resize();
+      initParticles();
+      draw();
+    };
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [canvasRef]);
+}
+
+/* ── Slideshow Hook ── */
+function useSlideshow(count: number, intervalMs = 5000) {
+  const [current, setCurrent] = useState(0);
+  const [prev, setPrev] = useState<number | null>(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((c) => {
+        setPrev(c);
+        return (c + 1) % count;
+      });
+    }, intervalMs);
+    return () => clearInterval(timer);
+  }, [count, intervalMs]);
+
+  return { current, prev };
+}
+
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hireModalOpen, setHireModalOpen] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+  const particleCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  const typedWord = useTypingEffect();
+  const { current: slideCurrent, prev: slidePrev } = useSlideshow(
+    SLIDESHOW_IMAGES.length,
+    5000,
+  );
+
+  useParticleCanvas(particleCanvasRef);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -78,6 +306,18 @@ export default function App() {
 
       {/* HERO */}
       <section id="hero" className="hero" ref={heroRef}>
+        {/* Background slideshow — z-index -1, behind canvas */}
+        {SLIDESHOW_IMAGES.map((src, i) => (
+          <div
+            key={src}
+            className="hero-slide"
+            style={{
+              backgroundImage: `url(${src})`,
+              opacity: i === slideCurrent ? 1 : i === slidePrev ? 0 : 0,
+            }}
+          />
+        ))}
+        <canvas ref={particleCanvasRef} className="hero-particles" />
         <div className="hero-overlay" />
         <motion.div
           className="hero-text"
@@ -86,11 +326,12 @@ export default function App() {
           transition={{ duration: 0.9, ease: "easeOut" }}
         >
           <h1 className="hero-heading">
-            designing
+            <span className="typing-accent">
+              {typedWord}
+              <span className="typing-cursor typing-cursor--blink" />
+            </span>
             <br />
-            digital
-            <br />
-            experiences.
+            <span className="typing-static">digital experiences.</span>
           </h1>
           <p className="hero-sub">
             I'm Shuvam Panda — a creative web designer crafting modern, fast and
@@ -109,14 +350,17 @@ export default function App() {
       </section>
 
       {/* SERVICES */}
-      <section id="services" className="section section--dark">
+      <section
+        id="services"
+        className="section section--texture section--texture-1"
+      >
         <div className="container">
           <motion.h2
             className="section-heading"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           >
             What I Do
           </motion.h2>
@@ -157,10 +401,10 @@ export default function App() {
                 key={s.title}
                 className="service-card"
                 data-ocid={`services.item.${i + 1}`}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.12 }}
+                transition={{ duration: 0.5, delay: i * 0.12, ease: "easeOut" }}
               >
                 <span className="service-icon">{s.icon}</span>
                 <h3 className="service-title">{s.title}</h3>
@@ -172,24 +416,27 @@ export default function App() {
       </section>
 
       {/* SELECTED WORK */}
-      <section id="work" className="section section--dark">
+      <section
+        id="work"
+        className="section section--texture section--texture-2"
+      >
         <div className="container">
           <motion.h2
             className="section-heading"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           >
             Selected Work
           </motion.h2>
           <motion.div
             className="project-card"
             data-ocid="work.item.1"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <div className="project-img-wrap">
               <img
@@ -218,10 +465,11 @@ export default function App() {
           <motion.div
             className="project-card"
             data-ocid="work.item.2"
-            initial={{ opacity: 0, y: 30 }}
+            style={{ marginTop: "28px" }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+            transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
           >
             <div className="project-img-wrap">
               <div
@@ -287,14 +535,17 @@ export default function App() {
       </section>
 
       {/* SKILLS & TOOLS */}
-      <section className="section section--dark" id="skills">
+      <section
+        className="section section--texture section--texture-3"
+        id="skills"
+      >
         <div className="container skills-container">
           <motion.h2
             className="section-heading"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           >
             Skills &amp; Tools
           </motion.h2>
@@ -314,7 +565,11 @@ export default function App() {
                 initial={{ opacity: 0, scale: 0.85 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.35, delay: i * 0.07 }}
+                transition={{
+                  duration: 0.35,
+                  delay: i * 0.07,
+                  ease: "easeOut",
+                }}
               >
                 {skill}
               </motion.span>
@@ -324,14 +579,17 @@ export default function App() {
       </section>
 
       {/* ABOUT ME */}
-      <section className="section section--dark about-section" id="about">
+      <section
+        className="section section--texture section--texture-1 about-section"
+        id="about"
+      >
         <div className="container about-container">
           <motion.h2
             className="section-heading"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           >
             About Me
           </motion.h2>
@@ -340,7 +598,7 @@ export default function App() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <em>Be bold or italic, never regular.</em> ✍️ Web design for creators
             who refuse to be quiet. If you have an idea, let's bring it to life.
@@ -350,7 +608,7 @@ export default function App() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+            transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
           >
             📍 Based in Bhubaneswar, Odisha. Part-time human, full-time
             pixel-pusher. 🎨 I don't just design websites; I build digital
@@ -360,14 +618,20 @@ export default function App() {
       </section>
 
       {/* CONTACT */}
-      <section className="section contact-section" id="contact">
+      <section
+        className="section contact-section"
+        id="contact"
+        style={{
+          backgroundImage: "url('/assets/images/texture-2.jpg')",
+        }}
+      >
         <div className="container contact-container">
           <motion.h2
             className="section-heading"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           >
             Let's Work Together
           </motion.h2>

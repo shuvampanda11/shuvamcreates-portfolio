@@ -115,12 +115,12 @@
   cursor: pointer;
   padding: 6px 14px;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 0.3s ease, opacity 0.3s ease;
   display: inline-block;
 }
 
 .nav-btn:hover {
-  color: #fff;
+  color: #a78bfa;
 }
 
 .hamburger {
@@ -168,11 +168,79 @@
   pointer-events: none;
 }
 
+/* Hero background slideshow — behind particles */
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  transition: opacity 2s ease-in-out;
+  pointer-events: none;
+}
+
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.65);
   pointer-events: none;
+  z-index: 1;
+}
+
+/* Typing cursor */
+.typing-line {
+  display: inline;
+}
+
+/* The cycling animated word — accent violet color for visual prominence */
+.typing-accent {
+  display: inline;
+  color: #a78bfa;
+  text-shadow: 0 0 32px rgba(167, 139, 250, 0.45);
+}
+
+/* Static portion of the hero heading — dimmed slightly */
+.typing-static {
+  display: inline;
+  opacity: 0.35;
+  font-size: 0.62em;
+  letter-spacing: 0.05em;
+  font-weight: 400;
+}
+
+.typing-cursor {
+  display: inline-block;
+  width: 3px;
+  height: 0.85em;
+  background: #a78bfa;
+  margin-left: 3px;
+  vertical-align: middle;
+  border-radius: 1px;
+  opacity: 1;
+  animation: cursor-blink 1.1s step-end infinite;
+}
+
+.typing-cursor--blink {
+  animation: cursor-blink 1.1s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 .hero-text {
@@ -211,12 +279,15 @@
   border-radius: 30px;
   cursor: pointer;
   text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease,
+    color 0.3s ease;
 }
 
 .cta-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(167, 139, 250, 0.35);
+  background: #a78bfa;
+  color: #fff;
 }
 
 .cta-btn--sm {
@@ -229,10 +300,47 @@
 .section {
   padding: 100px 90px;
   box-sizing: border-box;
+  position: relative;
 }
 
 .section--dark {
   background: #111;
+}
+
+/* Texture section backgrounds */
+.section--texture {
+  background-color: #0d0d0d;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  isolation: isolate;
+}
+
+.section--texture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.section--texture > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Per-section texture assignments */
+.section--texture-1 {
+  background-image: url("/assets/images/texture-1.jpg");
+}
+
+.section--texture-2 {
+  background-image: url("/assets/images/texture-2.jpg");
+}
+
+.section--texture-3 {
+  background-image: url("/assets/images/texture-3.jpg");
 }
 
 .container {
@@ -247,6 +355,8 @@
   letter-spacing: -0.3px;
 }
 
+/* Section headings animate via Framer Motion whileInView (opacity 0→1, y 24→0) */
+
 /* SERVICES */
 .service-grid {
   display: grid;
@@ -255,16 +365,19 @@
 }
 
 .service-card {
-  background: #1a1a1a;
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   padding: 32px 28px;
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: transform 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .service-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-6px);
+  border-color: rgba(167, 139, 250, 0.45);
+  box-shadow: 0 0 24px rgba(167, 139, 250, 0.28), 0 12px 32px rgba(0, 0, 0, 0.4);
 }
 
 .service-icon {
@@ -292,15 +405,27 @@
   display: flex;
   gap: 40px;
   align-items: center;
-  background: #1a1a1a;
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   padding: 32px;
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(167, 139, 250, 0.4);
+  box-shadow: 0 0 24px rgba(167, 139, 250, 0.22), 0 16px 40px
+    rgba(0, 0, 0, 0.45);
 }
 
 .project-img-wrap {
   flex-shrink: 0;
   width: 420px;
+  overflow: hidden;
+  border-radius: 15px;
 }
 
 .project-img {
@@ -308,6 +433,11 @@
   border-radius: 15px;
   display: block;
   object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.project-card:hover .project-img {
+  transform: scale(1.04);
 }
 
 .project-info {
@@ -341,18 +471,25 @@
 
 .skill-pill {
   display: inline-block;
-  background: #222;
+  background: rgba(34, 34, 34, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   border-radius: 25px;
   padding: 12px 22px;
   font-size: 14px;
   font-weight: 500;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.25s ease, transform 0.25s ease, border-color 0.25s
+    ease, box-shadow 0.25s ease;
+  cursor: default;
 }
 
 .skill-pill:hover {
-  background: #2e2e2e;
-  transform: translateY(-2px);
+  background: rgba(46, 46, 46, 0.9);
+  transform: scale(1.05) translateY(-2px);
+  border-color: rgba(167, 139, 250, 0.5);
+  box-shadow: 0 0 16px rgba(167, 139, 250, 0.3);
+  color: #a78bfa;
 }
 
 /* ABOUT */
@@ -389,6 +526,25 @@
   background: #000;
   text-align: center;
   padding: 120px 90px;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  isolation: isolate;
+}
+
+.contact-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.84);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.contact-section > * {
+  position: relative;
+  z-index: 1;
 }
 
 .contact-container {
@@ -423,11 +579,11 @@
 .contact-link {
   color: #ccc;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 0.3s ease;
 }
 
 .contact-link:hover {
-  color: #fff;
+  color: #a78bfa;
 }
 
 .whatsapp-link:hover {
