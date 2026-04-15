@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { type RefObject, useEffect, useRef, useState } from "react";
 
 /* ── Background Slideshow Images ── */
@@ -76,6 +76,102 @@ const INSTAGRAM_URL =
   "https://www.instagram.com/_shuvamcreates?igsh=aGQwbTAyZXd3dnR4";
 const WHATSAPP_URL = "https://wa.me/919692504800";
 const WORK_URL = "https://photography-studio-1dd.caffeine.xyz";
+
+/* ── Pricing Plans ── */
+type PricingTab = "starter" | "plus" | "premium" | "addons";
+
+const PRICING_TABS: { id: PricingTab; label: string; emoji: string }[] = [
+  { id: "starter", label: "Starter", emoji: "🟢" },
+  { id: "plus", label: "Plus", emoji: "🔵" },
+  { id: "premium", label: "Premium", emoji: "🟣" },
+  { id: "addons", label: "Add-ons", emoji: "🎯" },
+];
+
+interface Plan {
+  badge: string;
+  included: string[];
+  excluded: string[];
+  price: string;
+  waLink: string;
+}
+
+const PLANS: Record<Exclude<PricingTab, "addons">, Plan> = {
+  starter: {
+    badge: "Best for: Beginners / Personal Use",
+    included: [
+      "Basic Website Design",
+      "Simple & Clean Layout",
+      "Mobile Responsive",
+      "Hosting Included",
+      "Subdomain (example: yourname.mywebsite.com)",
+    ],
+    excluded: ["No Custom Domain", "No Maintenance"],
+    price: "₹1,999/-",
+    waLink:
+      "https://wa.me/919692504800?text=Hi%2C%20I%27m%20interested%20in%20the%20Starter%20Plan%20(Basic)%20for%20my%20website.%20Please%20share%20more%20details!",
+  },
+  plus: {
+    badge: "Best for: Small Businesses / Growing Brands",
+    included: [
+      "Professional Website Design",
+      "Better UI/UX (Not Basic)",
+      "Static Website (Fast & Smooth)",
+      "Mobile Responsive",
+      "Custom Domain Included (yourname.com)",
+      "Hosting Included",
+      "1 Year Free Maintenance",
+    ],
+    excluded: [],
+    price: "₹6,999/-",
+    waLink:
+      "https://wa.me/919692504800?text=Hi%2C%20I%27m%20interested%20in%20the%20Plus%20Plan%20(Standard)%20for%20my%20website.%20Please%20share%20more%20details!",
+  },
+  premium: {
+    badge: "Best for: Brands / Businesses who want top quality",
+    included: [
+      "Premium High-End Design",
+      "Fully Professional Look & Feel",
+      "Mobile + Performance Optimized",
+      "Custom Domain Included",
+      "High-Speed Hosting",
+      "Lifetime Maintenance",
+      "Priority Support",
+    ],
+    excluded: [],
+    price: "₹9,999/-",
+    waLink:
+      "https://wa.me/919692504800?text=Hi%2C%20I%27m%20interested%20in%20the%20Premium%20Plan%20(Advanced)%20for%20my%20website.%20Please%20share%20more%20details!",
+  },
+};
+
+interface Addon {
+  icon: string;
+  name: string;
+  desc: string;
+}
+
+const ADDONS: Addon[] = [
+  {
+    icon: "🔍",
+    name: "SEO Optimization",
+    desc: "Rank higher on Google with targeted keyword setup, meta tags, and performance tuning.",
+  },
+  {
+    icon: "💬",
+    name: "Contact Forms / WhatsApp Integration",
+    desc: "Let visitors reach you instantly via embedded contact forms or a direct WhatsApp chat button.",
+  },
+  {
+    icon: "🛠️",
+    name: "Admin Panel",
+    desc: "Manage your website content easily without touching any code — built to your needs.",
+  },
+  {
+    icon: "🛒",
+    name: "E-commerce Features",
+    desc: "Sell products or services online with a fully functional store, cart, and checkout.",
+  },
+];
 
 /* ── Floating Particles ── */
 interface Particle {
@@ -229,6 +325,7 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hireModalOpen, setHireModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<PricingTab>("starter");
   const heroRef = useRef<HTMLElement>(null);
   const particleCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -272,6 +369,14 @@ export default function App() {
             className="nav-btn"
           >
             Services
+          </button>
+          <button
+            type="button"
+            data-ocid="nav.pricing.link"
+            onClick={() => scrollTo("pricing")}
+            className="nav-btn nav-btn--pricing"
+          >
+            Plans &amp; Pricing
           </button>
           <button
             type="button"
@@ -415,10 +520,10 @@ export default function App() {
         </div>
       </section>
 
-      {/* SELECTED WORK */}
+      {/* PLANS & PRICING */}
       <section
-        id="work"
-        className="section section--texture section--texture-2"
+        id="pricing"
+        className="section section--texture section--texture-2 pricing-section"
       >
         <div className="container">
           <motion.h2
@@ -428,109 +533,260 @@ export default function App() {
             viewport={{ once: true }}
             transition={{ duration: 0.7, ease: "easeOut" }}
           >
-            Selected Work
+            Plans &amp; Pricing
           </motion.h2>
-          <motion.div
-            className="project-card"
-            data-ocid="work.item.1"
-            initial={{ opacity: 0, y: 20 }}
+          <motion.p
+            className="pricing-subtitle"
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
           >
-            <div className="project-img-wrap">
-              <img
-                src="/assets/generated/photography-portfolio-preview.dim_420x260.jpg"
-                alt="Photography Portfolio Website"
-                className="project-img"
-              />
-            </div>
-            <div className="project-info">
-              <h3 className="project-title">Photography Portfolio Website</h3>
-              <p className="project-desc">
-                Designed and developed a premium portfolio website for a
-                professional photographer with modern UI and responsive layout.
-              </p>
-              <a
-                href={WORK_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="cta-btn cta-btn--sm"
-                data-ocid="work.primary_button"
-              >
-                View Project
-              </a>
-            </div>
-          </motion.div>
+            Choose the plan that fits your goals — and let's build something
+            great together.
+          </motion.p>
+
+          {/* Tabs */}
           <motion.div
-            className="project-card"
-            data-ocid="work.item.2"
-            style={{ marginTop: "28px" }}
-            initial={{ opacity: 0, y: 20 }}
+            className="pricing-tabs"
+            data-ocid="pricing.tabs"
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
           >
-            <div className="project-img-wrap">
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  background:
-                    "linear-gradient(135deg, oklch(0.42 0.14 168) 0%, oklch(0.55 0.17 152) 50%, oklch(0.38 0.12 185) 100%)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  gap: "0.5rem",
-                }}
+            {PRICING_TABS.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={`pricing-tab ${activeTab === tab.id ? "pricing-tab--active" : ""}`}
+                data-ocid={`pricing.tab.${tab.id}`}
+                onClick={() => setActiveTab(tab.id)}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="48"
-                  height="48"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="oklch(0.95 0.05 168)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-label="Health care waveform icon"
-                >
-                  <title>Health care waveform icon</title>
-                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                </svg>
-                <span
-                  style={{
-                    color: "oklch(0.95 0.05 168)",
-                    fontSize: "0.8rem",
-                    letterSpacing: "0.08em",
-                    fontWeight: 600,
-                    opacity: 0.85,
-                  }}
-                >
-                  HOME HEALTH CARE
-                </span>
-              </div>
-            </div>
-            <div className="project-info">
-              <h3 className="project-title">New Life Home Health Care</h3>
-              <p className="project-desc">
-                A home health care platform providing compassionate,
-                professional care services — built to connect patients with
-                trusted healthcare providers.
-              </p>
-              <a
-                href="https://newlife-home-health-care-f0x.caffeine.xyz"
-                target="_blank"
-                rel="noreferrer"
-                className="cta-btn cta-btn--sm"
-                data-ocid="work.item.2.button"
-              >
-                View Project
-              </a>
-            </div>
+                <span className="pricing-tab-emoji">{tab.emoji}</span>
+                {tab.label}
+                {activeTab === tab.id && (
+                  <motion.span
+                    layoutId="pricing-tab-indicator"
+                    className="pricing-tab-indicator"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  />
+                )}
+              </button>
+            ))}
           </motion.div>
+
+          {/* Tab Content */}
+          <div className="pricing-content" data-ocid="pricing.panel">
+            <AnimatePresence mode="wait">
+              {activeTab !== "addons" ? (
+                <motion.div
+                  key={activeTab}
+                  className={`pricing-card pricing-card--${activeTab}`}
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -14 }}
+                  transition={{ duration: 0.38, ease: "easeOut" }}
+                  data-ocid={`pricing.${activeTab}.card`}
+                >
+                  {/* Badge */}
+                  <div className={`pricing-badge pricing-badge--${activeTab}`}>
+                    {PRICING_TABS.find((t) => t.id === activeTab)?.emoji}{" "}
+                    {PLANS[activeTab].badge}
+                  </div>
+
+                  {/* Features */}
+                  <ul className="pricing-features">
+                    {PLANS[activeTab].included.map((feat) => (
+                      <li
+                        key={feat}
+                        className="pricing-feature pricing-feature--included"
+                      >
+                        <span className="pricing-feature-icon">✅</span>
+                        {feat}
+                      </li>
+                    ))}
+                    {PLANS[activeTab].excluded.map((feat) => (
+                      <li
+                        key={feat}
+                        className="pricing-feature pricing-feature--excluded"
+                      >
+                        <span className="pricing-feature-icon">❌</span>
+                        {feat}
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Price tag */}
+                  <div className="pricing-price">{PLANS[activeTab].price}</div>
+
+                  {/* Buy button */}
+                  <a
+                    href={PLANS[activeTab].waLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`pricing-buy-btn pricing-buy-btn--${activeTab}`}
+                    data-ocid={`pricing.${activeTab}.buy_button`}
+                  >
+                    Get Started
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      style={{
+                        display: "inline",
+                        marginLeft: "8px",
+                        verticalAlign: "middle",
+                      }}
+                    >
+                      <title>WhatsApp</title>
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                    </svg>
+                  </a>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="addons"
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -14 }}
+                  transition={{ duration: 0.38, ease: "easeOut" }}
+                >
+                  <div className="pricing-badge pricing-badge--addons">
+                    🎯 Extra Add-ons (Optional)
+                  </div>
+                  <div className="addons-grid">
+                    {ADDONS.map((addon, i) => (
+                      <motion.div
+                        key={addon.name}
+                        className="addon-card"
+                        data-ocid={`pricing.addon.item.${i + 1}`}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.35,
+                          delay: i * 0.07,
+                          ease: "easeOut",
+                        }}
+                      >
+                        <span className="addon-icon">{addon.icon}</span>
+                        <div className="addon-info">
+                          <h4 className="addon-name">{addon.name}</h4>
+                          <p className="addon-desc">{addon.desc}</p>
+                        </div>
+                        <a
+                          href={`https://wa.me/919692504800?text=Hi%2C%20I%27m%20interested%20in%20adding%20${encodeURIComponent(addon.name)}%20to%20my%20website.%20Please%20share%20more%20details!`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="addon-btn"
+                          data-ocid={`pricing.addon.buy_button.${i + 1}`}
+                        >
+                          Add This
+                        </a>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </section>
+
+      {/* OUR CLIENTS */}
+      <section
+        id="work"
+        className="section section--texture section--texture-2 clients-section"
+      >
+        <div className="container">
+          <motion.h2
+            className="section-heading"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
+            Our Clients
+          </motion.h2>
+          <motion.p
+            className="clients-subtitle"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+          >
+            Real projects. Real results. Delivered with care.
+          </motion.p>
+          <div className="client-cards-row" data-ocid="work.list">
+            {[
+              {
+                img: "/assets/generated/photography-portfolio-preview.dim_420x260.jpg",
+                title: "Photography Portfolio",
+                desc: "Premium portfolio website for a professional photographer with modern UI and responsive layout.",
+                tag: "Web Design",
+                href: WORK_URL,
+                ocid: "work.item.1",
+              },
+              {
+                img: "/assets/images/newlife-logo.png",
+                imgClass: "client-card-img--logo",
+                title: "New Life Home Health Care",
+                desc: "Home health care platform connecting patients with trusted healthcare providers.",
+                tag: "Web Dev",
+                href: "https://newlife-home-health-care-f0x.caffeine.xyz",
+                ocid: "work.item.2",
+              },
+            ].map((project, i) => (
+              <motion.div
+                key={project.title}
+                className="client-card"
+                data-ocid={project.ocid}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
+              >
+                {/* Thumbnail */}
+                <div className="client-card-thumb">
+                  {project.img ? (
+                    <img
+                      src={project.img}
+                      alt={project.title}
+                      className={`client-card-img${"imgClass" in project && project.imgClass ? ` ${project.imgClass}` : ""}`}
+                    />
+                  ) : (
+                    <div className="client-card-placeholder">
+                      <span className="client-card-placeholder-icon">◈</span>
+                    </div>
+                  )}
+                  <span className="client-card-tag">{project.tag}</span>
+                </div>
+                {/* Always-visible title */}
+                <div className="client-card-header">
+                  <h3 className="client-card-title">{project.title}</h3>
+                  <span className="client-card-arrow" aria-hidden="true">
+                    ↗
+                  </span>
+                </div>
+                {/* Slide-reveal info */}
+                <div className="client-card-reveal">
+                  <p className="client-card-desc">{project.desc}</p>
+                  <a
+                    href={project.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="client-card-btn"
+                    data-ocid={`${project.ocid}.button`}
+                  >
+                    View Project
+                  </a>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
