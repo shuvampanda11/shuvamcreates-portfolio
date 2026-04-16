@@ -565,6 +565,24 @@
   padding: 0 14px 14px;
 }
 
+/* Click/tap expanded state — stays open regardless of hover */
+.client-card.is-expanded {
+  border-color: rgba(167, 139, 250, 0.45);
+  box-shadow: 0 0 22px rgba(167, 139, 250, 0.22), 0 12px 32px rgba(0, 0, 0, 0.5);
+  transform: translateY(-3px);
+}
+
+.client-card.is-expanded .client-card-reveal {
+  max-height: 200px;
+  opacity: 1;
+  padding: 0 14px 14px;
+}
+
+.client-card.is-expanded .client-card-arrow {
+  opacity: 1;
+  transform: translateX(0) rotate(45deg);
+}
+
 .client-card-desc {
   font-size: 11.5px;
   color: #999;

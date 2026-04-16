@@ -326,6 +326,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hireModalOpen, setHireModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<PricingTab>("starter");
+  const [expandedClient, setExpandedClient] = useState<number | null>(null);
   const heroRef = useRef<HTMLElement>(null);
   const particleCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -442,15 +443,14 @@ export default function App() {
             I'm Shuvam Panda — a creative web designer crafting modern, fast and
             premium websites for brands and creators.
           </p>
-          <a
-            href={WORK_URL}
-            target="_blank"
-            rel="noreferrer"
+          <button
+            type="button"
+            onClick={() => scrollTo("work")}
             className="cta-btn"
             data-ocid="hero.primary_button"
           >
             View My Work
-          </a>
+          </button>
         </motion.div>
       </section>
 
@@ -739,53 +739,69 @@ export default function App() {
                 href: "https://newlife-home-health-care-f0x.caffeine.xyz",
                 ocid: "work.item.2",
               },
-            ].map((project, i) => (
-              <motion.div
-                key={project.title}
-                className="client-card"
-                data-ocid={project.ocid}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
-              >
-                {/* Thumbnail */}
-                <div className="client-card-thumb">
-                  {project.img ? (
-                    <img
-                      src={project.img}
-                      alt={project.title}
-                      className={`client-card-img${"imgClass" in project && project.imgClass ? ` ${project.imgClass}` : ""}`}
-                    />
-                  ) : (
-                    <div className="client-card-placeholder">
-                      <span className="client-card-placeholder-icon">◈</span>
-                    </div>
-                  )}
-                  <span className="client-card-tag">{project.tag}</span>
-                </div>
-                {/* Always-visible title */}
-                <div className="client-card-header">
-                  <h3 className="client-card-title">{project.title}</h3>
-                  <span className="client-card-arrow" aria-hidden="true">
-                    ↗
-                  </span>
-                </div>
-                {/* Slide-reveal info */}
-                <div className="client-card-reveal">
-                  <p className="client-card-desc">{project.desc}</p>
-                  <a
-                    href={project.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="client-card-btn"
-                    data-ocid={`${project.ocid}.button`}
-                  >
-                    View Project
-                  </a>
-                </div>
-              </motion.div>
-            ))}
+            ].map((project, i) => {
+              const isExpanded = expandedClient === i;
+              return (
+                <motion.div
+                  key={project.title}
+                  className={`client-card${isExpanded ? " is-expanded" : ""}`}
+                  data-ocid={project.ocid}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    duration: 0.5,
+                    delay: i * 0.1,
+                    ease: "easeOut",
+                  }}
+                  onClick={() => setExpandedClient(isExpanded ? null : i)}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setExpandedClient(isExpanded ? null : i);
+                    }
+                  }}
+                >
+                  {/* Thumbnail */}
+                  <div className="client-card-thumb">
+                    {project.img ? (
+                      <img
+                        src={project.img}
+                        alt={project.title}
+                        className={`client-card-img${"imgClass" in project && project.imgClass ? ` ${project.imgClass}` : ""}`}
+                      />
+                    ) : (
+                      <div className="client-card-placeholder">
+                        <span className="client-card-placeholder-icon">◈</span>
+                      </div>
+                    )}
+                    <span className="client-card-tag">{project.tag}</span>
+                  </div>
+                  {/* Always-visible title */}
+                  <div className="client-card-header">
+                    <h3 className="client-card-title">{project.title}</h3>
+                    <span className="client-card-arrow" aria-hidden="true">
+                      ↗
+                    </span>
+                  </div>
+                  {/* Slide-reveal info */}
+                  <div className="client-card-reveal">
+                    <p className="client-card-desc">{project.desc}</p>
+                    <a
+                      href={project.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="client-card-btn"
+                      data-ocid={`${project.ocid}.button`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      View Project
+                    </a>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
