@@ -1,5 +1,27 @@
 import { AnimatePresence, motion } from "motion/react";
-import { type RefObject, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+/* ── Scroll Reveal Hook ── */
+function useScrollReveal() {
+  const observed = useRef(new WeakSet<HTMLElement>());
+  const observe = useCallback((el: HTMLElement | null) => {
+    if (!el || observed.current.has(el)) return;
+    observed.current.add(el);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+    );
+    observer.observe(el);
+  }, []);
+  return observe;
+}
 
 /* ── Background Slideshow Images ── */
 const SLIDESHOW_IMAGES = [
@@ -173,136 +195,6 @@ const ADDONS: Addon[] = [
   },
 ];
 
-/* ── Floating Particles ── */
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  r: number;
-}
-
-function useParticleCanvas(canvasRef: RefObject<HTMLCanvasElement | null>) {
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const PARTICLE_COUNT = 90;
-    const CONNECTION_DIST = 120;
-    const SPEED_MIN = 0.3;
-    const SPEED_MAX = 0.8;
-    // soft purple/violet matching portfolio accent
-    const PARTICLE_COLOR = "rgba(160, 120, 255,";
-    const LINE_COLOR = "rgba(180, 140, 255,";
-
-    let particles: Particle[] = [];
-    let animId: number;
-    let w = 0;
-    let h = 0;
-
-    function resize() {
-      if (!canvas) return;
-      w = canvas.width = canvas.offsetWidth;
-      h = canvas.height = canvas.offsetHeight;
-    }
-
-    function randBetween(a: number, b: number) {
-      return a + Math.random() * (b - a);
-    }
-
-    function initParticles() {
-      particles = Array.from({ length: PARTICLE_COUNT }, () => {
-        const speed = randBetween(SPEED_MIN, SPEED_MAX);
-        const angle = Math.random() * Math.PI * 2;
-        return {
-          x: Math.random() * w,
-          y: Math.random() * h,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          r: randBetween(2, 3),
-        };
-      });
-    }
-
-    function draw() {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, w, h);
-
-      // update positions + bounce
-      for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) {
-          p.x = 0;
-          p.vx *= -1;
-        }
-        if (p.x > w) {
-          p.x = w;
-          p.vx *= -1;
-        }
-        if (p.y < 0) {
-          p.y = 0;
-          p.vy *= -1;
-        }
-        if (p.y > h) {
-          p.y = h;
-          p.vy *= -1;
-        }
-      }
-
-      // draw connection lines
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const a = particles[i];
-          const b = particles[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < CONNECTION_DIST) {
-            const alpha = (1 - dist / CONNECTION_DIST) * 0.35;
-            ctx.beginPath();
-            ctx.strokeStyle = `${LINE_COLOR}${alpha})`;
-            ctx.lineWidth = 0.8;
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      // draw particles
-      for (const p of particles) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `${PARTICLE_COLOR}0.75)`;
-        ctx.fill();
-      }
-
-      animId = requestAnimationFrame(draw);
-    }
-
-    resize();
-    initParticles();
-    draw();
-
-    const onResize = () => {
-      cancelAnimationFrame(animId);
-      resize();
-      initParticles();
-      draw();
-    };
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", onResize);
-    };
-  }, [canvasRef]);
-}
-
 /* ── Slideshow Hook ── */
 function useSlideshow(count: number, intervalMs = 5000) {
   const [current, setCurrent] = useState(0);
@@ -322,21 +214,18 @@ function useSlideshow(count: number, intervalMs = 5000) {
 }
 
 export default function App() {
+  const reveal = useScrollReveal();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hireModalOpen, setHireModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<PricingTab>("starter");
-  const [expandedClient, setExpandedClient] = useState<number | null>(null);
   const heroRef = useRef<HTMLElement>(null);
-  const particleCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const typedWord = useTypingEffect();
   const { current: slideCurrent, prev: slidePrev } = useSlideshow(
     SLIDESHOW_IMAGES.length,
     5000,
   );
-
-  useParticleCanvas(particleCanvasRef);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -431,100 +320,79 @@ export default function App() {
             }}
           />
         ))}
-        <canvas ref={particleCanvasRef} className="hero-particles" />
+        {/* Glossy liquid WebGL canvas — z-index 0, above slideshow (-1), below overlay (1) */}
+        <video
+          src="/assets/videos/hero-bg.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: 0,
+            pointerEvents: "none",
+          }}
+        />
         <div className="hero-overlay" />
         <div className="hero-text">
-          <motion.h1
-            className="hero-heading"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, ease: "easeOut", delay: 0.1 }}
-          >
-            <motion.span
-              className="typing-accent"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-            >
+          <h1 className="hero-heading reveal" ref={reveal}>
+            <span className="typing-accent">
               {typedWord}
               <span className="typing-cursor typing-cursor--blink" />
-            </motion.span>
+            </span>
             <br />
-            <motion.span
-              className="typing-static"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.35 }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
-            >
-              digital experiences.
-            </motion.span>
-          </motion.h1>
-          <motion.p
-            className="hero-sub"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.55 }}
+            <span className="typing-static">digital experiences.</span>
+          </h1>
+          <p
+            className="hero-sub reveal"
+            ref={reveal}
+            style={{ transitionDelay: "0.15s" }}
           >
             I'm Shuvam Panda — a creative web designer crafting modern, fast and
             premium websites for brands and creators.
-          </motion.p>
-          <motion.button
+          </p>
+          <button
             type="button"
             onClick={() => scrollTo("work")}
-            className="cta-btn"
+            className="cta-btn reveal"
             data-ocid="hero.primary_button"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.75 }}
+            ref={reveal}
+            style={{ transitionDelay: "0.28s" }}
           >
             View My Work
-          </motion.button>
+          </button>
         </div>
       </section>
 
       {/* PROFILE */}
-      <motion.section
-        id="profile"
-        className="profile-section"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
+      <section id="profile" className="profile-section">
         <div className="profile-inner">
           {/* LEFT COLUMN — tall portrait card */}
-          <motion.div
-            className="profile-left"
-            initial={{ opacity: 0, x: -80 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 1.0, ease: "easeOut" }}
-          >
-            <div className="profile-portrait-frame" data-ocid="profile.avatar">
+          <div className="profile-left">
+            <div
+              className="profile-portrait-frame reveal"
+              ref={reveal}
+              data-ocid="profile.avatar"
+            >
               <img
                 src="/assets/images/shuvam-profile-new.png"
                 alt="Shuvam Panda — Creative Designer"
                 className="profile-portrait-img"
               />
             </div>
-          </motion.div>
+          </div>
 
           {/* RIGHT COLUMN */}
-          <motion.div
-            className="profile-right"
-            initial={{ opacity: 0, x: 80 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 1.0, ease: "easeOut", delay: 0.18 }}
-          >
+          <div className="profile-right">
             {/* Location */}
-            <motion.div
-              className="profile-location"
+            <div
+              className="profile-location reveal"
+              ref={reveal}
               data-ocid="profile.location"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -542,21 +410,19 @@ export default function App() {
                 <circle cx="12" cy="10" r="3" />
               </svg>
               Bhubaneswar, India
-            </motion.div>
+            </div>
 
             {/* Name */}
-            <motion.h1
-              className="profile-name"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.8, delay: 0.35, ease: "easeOut" }}
+            <h1
+              className="profile-name reveal"
+              ref={reveal}
+              style={{ transitionDelay: "0.1s" }}
             >
               <span className="profile-name-line">Shuvam</span>
               <span className="profile-name-line profile-name-line--accent">
                 Panda
               </span>
-            </motion.h1>
+            </h1>
 
             {/* Accent divider */}
             <div className="profile-divider" aria-hidden="true">
@@ -567,13 +433,11 @@ export default function App() {
             </div>
 
             {/* About Me */}
-            <motion.div
-              className="profile-block profile-glass-card"
+            <div
+              className="profile-block profile-glass-card reveal"
+              ref={reveal}
+              style={{ transitionDelay: "0.2s" }}
               data-ocid="profile.about"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
             >
               <div className="profile-label">
                 <span className="profile-label-dot" />
@@ -586,10 +450,15 @@ export default function App() {
                 sell, convert, and leave a lasting impression. Available for
                 freelance projects — let's build something amazing together.
               </p>
-            </motion.div>
+            </div>
 
             {/* Skills */}
-            <div className="profile-block" data-ocid="profile.skills">
+            <div
+              className="profile-block reveal"
+              ref={reveal}
+              style={{ transitionDelay: "0.3s" }}
+              data-ocid="profile.skills"
+            >
               <div className="profile-label">
                 <span className="profile-label-dot" />
                 Skills
@@ -632,18 +501,10 @@ export default function App() {
                     glow: "rgba(100,80,200,0.3)",
                   },
                 ].map((tool, i) => (
-                  <motion.div
+                  <div
                     key={tool.name}
                     className="profile-skill-pill"
                     data-ocid={`profile.skill.${i + 1}`}
-                    initial={{ opacity: 0, scale: 0.85, y: 20, x: 10 }}
-                    whileInView={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{
-                      duration: 0.45,
-                      delay: 0.35 + i * 0.09,
-                      ease: "easeOut",
-                    }}
                     style={
                       {
                         "--pill-color": tool.color,
@@ -653,13 +514,18 @@ export default function App() {
                     }
                   >
                     <span className="profile-skill-badge">{tool.badge}</span>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* Social Links */}
-            <div className="profile-socials" data-ocid="profile.socials">
+            <div
+              className="profile-socials reveal"
+              ref={reveal}
+              style={{ transitionDelay: "0.4s" }}
+              data-ocid="profile.socials"
+            >
               {[
                 {
                   label: "LinkedIn",
@@ -784,29 +650,19 @@ export default function App() {
                 </a>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* SERVICES */}
-      <motion.section
+      <section
         id="services"
         className="section section--texture section--texture-1"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
       >
         <div className="container">
-          <motion.h2
-            className="section-heading heading-reveal"
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
+          <h2 className="section-heading reveal" ref={reveal}>
             What I Do
-          </motion.h2>
+          </h2>
           <div className="service-grid">
             {[
               {
@@ -840,62 +696,46 @@ export default function App() {
                 icon: "◇",
               },
             ].map((s, i) => (
-              <motion.div
+              <div
                 key={s.title}
-                className="service-card"
+                className="service-card reveal"
+                ref={reveal}
+                style={{ transitionDelay: `${i * 0.1}s` }}
                 data-ocid={`services.item.${i + 1}`}
-                initial={{ opacity: 0, y: 40, x: i % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, y: 0, x: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.6, delay: i * 0.1, ease: "easeOut" }}
               >
                 <span className="service-icon">{s.icon}</span>
                 <h3 className="service-title">{s.title}</h3>
                 <p className="service-desc">{s.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* PLANS & PRICING */}
-      <motion.section
+      <section
         id="pricing"
         className="section section--texture section--texture-2 pricing-section"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
       >
         <div className="container">
-          <motion.h2
-            className="section-heading heading-reveal"
-            initial={{ opacity: 0, x: -40, scale: 0.95 }}
-            whileInView={{ opacity: 1, x: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
+          <h2 className="section-heading reveal" ref={reveal}>
             Plans &amp; Pricing
-          </motion.h2>
-          <motion.p
-            className="pricing-subtitle"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+          </h2>
+          <p
+            className="pricing-subtitle reveal"
+            ref={reveal}
+            style={{ transitionDelay: "0.1s" }}
           >
             Choose the plan that fits your goals — and let's build something
             great together.
-          </motion.p>
+          </p>
 
           {/* Tabs */}
-          <motion.div
-            className="pricing-tabs"
+          <div
+            className="pricing-tabs reveal"
+            ref={reveal}
+            style={{ transitionDelay: "0.2s" }}
             data-ocid="pricing.tabs"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
           >
             {PRICING_TABS.map((tab) => (
               <button
@@ -916,19 +756,15 @@ export default function App() {
                 )}
               </button>
             ))}
-          </motion.div>
+          </div>
 
           {/* Tab Content */}
           <div className="pricing-content" data-ocid="pricing.panel">
             <AnimatePresence mode="wait">
               {activeTab !== "addons" ? (
-                <motion.div
+                <div
                   key={activeTab}
                   className={`pricing-card pricing-card--${activeTab}`}
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -14 }}
-                  transition={{ duration: 0.38, ease: "easeOut" }}
                   data-ocid={`pricing.${activeTab}.card`}
                 >
                   {/* Badge */}
@@ -988,31 +824,18 @@ export default function App() {
                       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                     </svg>
                   </a>
-                </motion.div>
+                </div>
               ) : (
-                <motion.div
-                  key="addons"
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -14 }}
-                  transition={{ duration: 0.38, ease: "easeOut" }}
-                >
+                <div key="addons">
                   <div className="pricing-badge pricing-badge--addons">
                     🎯 Extra Add-ons (Optional)
                   </div>
                   <div className="addons-grid">
                     {ADDONS.map((addon, i) => (
-                      <motion.div
+                      <div
                         key={addon.name}
                         className="addon-card"
                         data-ocid={`pricing.addon.item.${i + 1}`}
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                          duration: 0.35,
-                          delay: i * 0.07,
-                          ease: "easeOut",
-                        }}
                       >
                         <span className="addon-icon">{addon.icon}</span>
                         <div className="addon-info">
@@ -1028,50 +851,37 @@ export default function App() {
                         >
                           Add This
                         </a>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
-                </motion.div>
+                </div>
               )}
             </AnimatePresence>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* OUR CLIENTS */}
-      <motion.section
+      <section
         id="work"
         className="section section--texture section--texture-2 clients-section"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
       >
         <div className="container">
-          <motion.h2
-            className="section-heading heading-reveal"
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
+          <h2 className="section-heading reveal" ref={reveal}>
             Our Clients
-          </motion.h2>
-          <motion.p
-            className="clients-subtitle"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+          </h2>
+          <p
+            className="clients-subtitle reveal"
+            ref={reveal}
+            style={{ transitionDelay: "0.1s" }}
           >
             Real projects. Real results. Delivered with care.
-          </motion.p>
+          </p>
           <div className="client-cards-row" data-ocid="work.list">
             {[
               {
                 img: "/assets/generated/photography-portfolio-preview.dim_420x260.jpg",
                 title: "Photography Portfolio",
-                desc: "Premium portfolio website for a professional photographer with modern UI and responsive layout.",
                 tag: "Web Design",
                 href: WORK_URL,
                 ocid: "work.item.1",
@@ -1080,7 +890,6 @@ export default function App() {
                 img: "/assets/images/newlife-logo.png",
                 imgClass: "client-card-img--logo",
                 title: "New Life Home Health Care",
-                desc: "Home health care platform connecting patients with trusted healthcare providers.",
                 tag: "Web Dev",
                 href: "https://newlife-home-health-care-f0x.caffeine.xyz",
                 ocid: "work.item.2",
@@ -1089,105 +898,79 @@ export default function App() {
                 img: null,
                 imgClass: "client-card-img--ai-placeholder",
                 title: "खुशबू perfume",
-                desc: "Modern AI agent orchestration platform — autonomous agents that plan, build, and deploy web apps end-to-end.",
                 tag: "AI / Web App",
                 href: "https://v0-agentic-build-orchestrate-a-lilac.vercel.app/",
                 ocid: "work.item.3",
               },
-            ].map((project, i) => {
-              const isExpanded = expandedClient === i;
-              return (
-                <motion.div
-                  key={project.title}
-                  className={`client-card${isExpanded ? " is-expanded" : ""}`}
-                  data-ocid={project.ocid}
-                  initial={{ opacity: 0, y: 20, x: 30 }}
-                  whileInView={{ opacity: 1, y: 0, x: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{
-                    duration: 0.55,
-                    delay: i * 0.12,
-                    ease: "easeOut",
-                  }}
-                  onClick={() => setExpandedClient(isExpanded ? null : i)}
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setExpandedClient(isExpanded ? null : i);
-                    }
-                  }}
-                >
-                  {/* Thumbnail */}
-                  <div className="client-card-thumb">
-                    {project.img ? (
-                      <img
-                        src={project.img}
-                        alt={project.title}
-                        className={`client-card-img${"imgClass" in project && project.imgClass ? ` ${project.imgClass}` : ""}`}
-                      />
-                    ) : project.imgClass ===
-                      "client-card-img--ai-placeholder" ? (
-                      <div className="client-card-img--ai-placeholder">
-                        <span className="ai-placeholder-label">
-                          खुशबू perfume
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="client-card-placeholder">
-                        <span className="client-card-placeholder-icon">◈</span>
-                      </div>
-                    )}
-                    <span className="client-card-tag">{project.tag}</span>
-                  </div>
-                  {/* Always-visible title */}
-                  <div className="client-card-header">
-                    <h3 className="client-card-title">{project.title}</h3>
-                    <span className="client-card-arrow" aria-hidden="true">
-                      ↗
-                    </span>
-                  </div>
-                  {/* Slide-reveal info */}
-                  <div className="client-card-reveal">
-                    <p className="client-card-desc">{project.desc}</p>
-                    <a
-                      href={project.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="client-card-btn"
-                      data-ocid={`${project.ocid}.button`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      View Project
-                    </a>
-                  </div>
-                </motion.div>
-              );
-            })}
+              {
+                img: null,
+                imgClass: "client-card-img--copper-placeholder",
+                title: "Hot Copper Studio",
+                tag: "Web Design",
+                href: "https://hot-copper-rfv-draft.caffeine.xyz",
+                ocid: "work.item.4",
+              },
+            ].map((project, i) => (
+              <a
+                key={project.title}
+                href={project.href}
+                target="_blank"
+                rel="noreferrer"
+                className="client-card reveal"
+                ref={reveal}
+                style={{ transitionDelay: `${i * 0.1}s` }}
+                data-ocid={project.ocid}
+              >
+                {/* Thumbnail */}
+                <div className="client-card-thumb">
+                  {project.img ? (
+                    <img
+                      src={project.img}
+                      alt={project.title}
+                      className={`client-card-img${project.imgClass ? ` ${project.imgClass}` : ""}`}
+                    />
+                  ) : project.imgClass === "client-card-img--ai-placeholder" ? (
+                    <div className="client-card-img--ai-placeholder">
+                      <span className="ai-placeholder-label">खुशबू perfume</span>
+                    </div>
+                  ) : project.imgClass ===
+                    "client-card-img--copper-placeholder" ? (
+                    <div className="client-card-img--copper-placeholder">
+                      <span className="copper-placeholder-label">
+                        Hot Copper
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="client-card-placeholder">
+                      <span className="client-card-placeholder-icon">◈</span>
+                    </div>
+                  )}
+                  <span className="client-card-tag">{project.tag}</span>
+                </div>
+                {/* Always-visible title */}
+                <div className="client-card-header">
+                  <h3 className="client-card-title">{project.title}</h3>
+                </div>
+              </a>
+            ))}
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* SKILLS & TOOLS */}
-      <motion.section
+      <section
         className="section section--texture section--texture-3"
         id="skills"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
       >
         <div className="container skills-container">
-          <motion.h2
-            className="section-heading heading-reveal"
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
+          <h2 className="section-heading reveal" ref={reveal}>
             Skills &amp; Tools
-          </motion.h2>
-          <div className="skill-list">
+          </h2>
+          <div
+            className="skill-list reveal"
+            ref={reveal}
+            style={{ transitionDelay: "0.15s" }}
+          >
             {[
               "HTML",
               "CSS",
@@ -1196,107 +979,71 @@ export default function App() {
               "UI Design",
               "Figma",
             ].map((skill, i) => (
-              <motion.span
+              <span
                 key={skill}
                 className="skill-pill"
                 data-ocid={`skills.item.${i + 1}`}
-                initial={{ opacity: 0, scale: 0.85, y: 15 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{
-                  duration: 0.4,
-                  delay: i * 0.07,
-                  ease: "easeOut",
-                }}
               >
                 {skill}
-              </motion.span>
+              </span>
             ))}
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* ABOUT ME */}
-      <motion.section
+      <section
         className="section section--texture section--texture-1 about-section"
         id="about"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
       >
         <div className="container about-container">
-          <motion.h2
-            className="section-heading heading-reveal"
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
+          <h2 className="section-heading reveal" ref={reveal}>
             About Me
-          </motion.h2>
-          <motion.p
-            className="about-quote"
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
+          </h2>
+          <p
+            className="about-quote reveal"
+            ref={reveal}
+            style={{ transitionDelay: "0.1s" }}
           >
             <em>Be bold or italic, never regular.</em> ✍️ Web design for creators
             who refuse to be quiet. If you have an idea, let's bring it to life.
-          </motion.p>
-          <motion.p
-            className="about-bio"
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, delay: 0.12, ease: "easeOut" }}
+          </p>
+          <p
+            className="about-bio reveal"
+            ref={reveal}
+            style={{ transitionDelay: "0.2s" }}
           >
             📍 Based in Bhubaneswar, Odisha. Part-time human, full-time
             pixel-pusher. 🎨 I don't just design websites; I build digital
             legacies. Let's create something electric ⚡.
-          </motion.p>
+          </p>
         </div>
-      </motion.section>
+      </section>
 
       {/* CONTACT */}
-      <motion.section
+      <section
         className="section contact-section"
         id="contact"
         style={{
           backgroundImage: "url('/assets/images/texture-2.jpg')",
         }}
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
       >
         <div className="container contact-container">
-          <motion.h2
-            className="section-heading heading-reveal"
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
+          <h2 className="section-heading reveal" ref={reveal}>
             Let's Work Together
-          </motion.h2>
-          <motion.p
-            className="contact-sub"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+          </h2>
+          <p
+            className="contact-sub reveal"
+            ref={reveal}
+            style={{ transitionDelay: "0.1s" }}
           >
             Have a project in mind? Let's build something amazing together.
-          </motion.p>
-          <motion.div
-            className="contact-info"
+          </p>
+          <div
+            className="contact-info reveal"
+            ref={reveal}
+            style={{ transitionDelay: "0.2s" }}
             data-ocid="contact.panel"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
           >
             <p className="contact-detail">
               <span className="contact-label">Email</span>
@@ -1338,21 +1085,17 @@ export default function App() {
                 +91 9692504800
               </a>
             </p>
-          </motion.div>
-          <motion.button
+          </div>
+          <button
             type="button"
             className="cta-btn"
             data-ocid="contact.primary_button"
             onClick={() => setHireModalOpen(true)}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.35, ease: "easeOut" }}
           >
             Hire Me
-          </motion.button>
+          </button>
         </div>
-      </motion.section>
+      </section>
 
       {/* FOOTER */}
       <footer className="footer">
@@ -1405,12 +1148,7 @@ function HireModal({ onClose, whatsappUrl, instagramUrl }: HireModalProps) {
         onClick={onClose}
       />
       <dialog open className="hire-modal" data-ocid="hire.modal">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.88, y: 24 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.28, ease: "easeOut" }}
-          className="hire-modal-inner"
-        >
+        <div className="hire-modal-inner">
           <button
             type="button"
             className="hire-modal-close"
@@ -1475,7 +1213,7 @@ function HireModal({ onClose, whatsappUrl, instagramUrl }: HireModalProps) {
               <span className="hire-option-sub">DM me on Instagram</span>
             </a>
           </div>
-        </motion.div>
+        </div>
       </dialog>
     </div>
   );
