@@ -327,6 +327,7 @@ export default function App() {
           muted
           loop
           playsInline
+          preload="auto"
           style={{
             position: "absolute",
             inset: 0,
@@ -382,6 +383,7 @@ export default function App() {
                 src="/assets/images/shuvam-profile-new.png"
                 alt="Shuvam Panda — Creative Designer"
                 className="profile-portrait-img"
+                loading="lazy"
               />
             </div>
           </div>
@@ -928,6 +930,7 @@ export default function App() {
                       src={project.img}
                       alt={project.title}
                       className={`client-card-img${project.imgClass ? ` ${project.imgClass}` : ""}`}
+                      loading="lazy"
                     />
                   ) : project.imgClass === "client-card-img--ai-placeholder" ? (
                     <div className="client-card-img--ai-placeholder">
