@@ -320,7 +320,7 @@ export default function App() {
             }}
           />
         ))}
-        {/* Glossy liquid WebGL canvas — z-index 0, above slideshow (-1), below overlay (1) */}
+        {/* Hero video background — z-index 0, above slideshow (-1), below overlay (1) */}
         <video
           src="/assets/videos/hero-bg.mp4"
           autoPlay
@@ -328,6 +328,9 @@ export default function App() {
           loop
           playsInline
           preload="auto"
+          poster="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
+          // @ts-ignore
+          fetchpriority="high"
           style={{
             position: "absolute",
             inset: 0,
@@ -336,6 +339,7 @@ export default function App() {
             objectFit: "cover",
             zIndex: 0,
             pointerEvents: "none",
+            opacity: 1,
           }}
         />
         <div className="hero-overlay" />

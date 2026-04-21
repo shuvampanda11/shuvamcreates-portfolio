@@ -519,24 +519,8 @@
   align-items: center;
   padding: 120px 90px 80px;
   position: relative;
-  background: radial-gradient(
-      ellipse at 20% 50%,
-      rgba(255, 255, 255, 0.03) 0%,
-      transparent 60%
-    ), linear-gradient(135deg, #0a0a0a 0%, #000 60%, #0d0d0d 100%);
+  background: #000;
   overflow: hidden;
-}
-
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse at 75% 30%,
-    rgba(255, 255, 255, 0.04) 0%,
-    transparent 55%
-  );
-  pointer-events: none;
 }
 
 /* Hero background slideshow — behind particles */
