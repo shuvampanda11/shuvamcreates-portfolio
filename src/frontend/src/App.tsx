@@ -1,6 +1,224 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+/* ── Follow-Effect Section Images — Shuvam's uploaded photos ── */
+const FOLLOW_IMAGES = [
+  "/assets/72hrs_in_bangkok-019dbf02-eefe-7708-9e70-52ae16193db1.webp",
+  "/assets/again_flexing-019dbf02-ef6a-7095-9709-a8d9df338133.jpg",
+  "/assets/whatsapp_image_2026-04-24_at_2.31.50_pm-019dbf02-f0b4-7580-a072-5efa655ccdf4.jpeg",
+  "/assets/kolkata_diaries_09-02-019dbf02-f112-70fd-8196-0d4c14316650.jpg",
+  "/assets/whatsapp_image_2026-04-24_at_2.31.14_pm-019dbf02-f208-74cb-859c-9cfdd3cac63d.jpeg",
+  "/assets/655173678_18076167986572189_7800662887643349128_n-019dbf02-f41a-770d-baf3-7cbc67cc00c6.jpg",
+];
+
+/* ── Cursor-Follow Hero Section ── */
+function FollowEffectSection({
+  onScrollToWork,
+}: { onScrollToWork: () => void }) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const lettersRef = useRef<HTMLSpanElement[]>([]);
+  const [cardVisible, setCardVisible] = useState(false);
+  const [cardPos, setCardPos] = useState({ x: 0, y: 0 });
+  const currentImgRef = useRef(0);
+  const lastPosRef = useRef({ x: 0, y: 0 });
+  const imgRefsRef = useRef<HTMLImageElement[]>([]);
+
+  const setImgRef = useCallback((el: HTMLImageElement | null, i: number) => {
+    if (el) imgRefsRef.current[i] = el;
+  }, []);
+
+  const setLetterRef = useCallback((el: HTMLSpanElement | null, i: number) => {
+    if (el) lettersRef.current[i] = el;
+  }, []);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const THRESHOLD = 60;
+
+    function onMouseMove(e: MouseEvent) {
+      const x = e.clientX;
+      const y = e.clientY;
+      const isInteractive = (e.target as HTMLElement).closest(
+        "[data-interactive]",
+      );
+
+      setCardPos({ x, y });
+      setCardVisible(!isInteractive);
+
+      // Letter push effect
+      for (const letter of lettersRef.current) {
+        if (!letter) continue;
+        const rect = letter.getBoundingClientRect();
+        const dx = x - (rect.left + rect.width / 2);
+        const dy = y - (rect.top + rect.height / 2);
+        const dist = Math.hypot(dx, dy);
+        if (dist < 150) {
+          const angle = Math.atan2(dy, dx);
+          const push = (150 - dist) / 10;
+          letter.style.transform = `translate(${Math.cos(angle) * push}px, ${Math.sin(angle) * push}px)`;
+        } else {
+          letter.style.transform = "translate(0, 0)";
+        }
+      }
+
+      // Image swap on movement
+      const movement = Math.hypot(
+        x - lastPosRef.current.x,
+        y - lastPosRef.current.y,
+      );
+      if (movement > THRESHOLD) {
+        const imgs = imgRefsRef.current;
+        if (imgs[currentImgRef.current]) {
+          imgs[currentImgRef.current].classList.remove("fcard-img--active");
+        }
+        currentImgRef.current =
+          (currentImgRef.current + 1) % FOLLOW_IMAGES.length;
+        if (imgs[currentImgRef.current]) {
+          imgs[currentImgRef.current].classList.add("fcard-img--active");
+        }
+        lastPosRef.current = { x, y };
+      }
+    }
+
+    function onMouseLeave() {
+      setCardVisible(false);
+      for (const l of lettersRef.current) {
+        if (l) l.style.transform = "translate(0, 0)";
+      }
+    }
+
+    section.addEventListener("mousemove", onMouseMove);
+    section.addEventListener("mouseleave", onMouseLeave);
+    return () => {
+      section.removeEventListener("mousemove", onMouseMove);
+      section.removeEventListener("mouseleave", onMouseLeave);
+    };
+  }, []);
+
+  const heroLetters = "WEB DESIGNER"
+    .split("")
+    .map((char, _i) => (char === " " ? "\u00A0" : char));
+
+  return (
+    <div ref={sectionRef} className="fcard-section" style={{ cursor: "none" }}>
+      {/* Video background */}
+      <video
+        src="/assets/videos/hero-bg.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        // @ts-ignore
+        fetchpriority="high"
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
+      {/* Dark overlay for readability */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "rgba(0,0,0,0.52)",
+          zIndex: 1,
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Fixed header for this section */}
+      <div className="fcard-header">
+        <div className="fcard-header-left">© 2026</div>
+        <div className="fcard-header-right">
+          <strong>@shuvamcreates</strong>
+        </div>
+      </div>
+
+      {/* Centered Hero Text */}
+      <div className="fcard-hero-text">
+        <div className="fcard-tagline">@ shuvamcreates</div>
+        <h2 className="fcard-heading">
+          {heroLetters.map((char, i) => (
+            <span
+              // biome-ignore lint/suspicious/noArrayIndexKey: static character array — positions never reorder
+              key={i}
+              ref={(el) => setLetterRef(el, i)}
+              className="fcard-letter"
+            >
+              {char}
+            </span>
+          ))}
+        </h2>
+        <div className="fcard-bio-row">
+          <p className="fcard-bio-text">
+            Specializing in web design, digital experiences &amp; brand
+            identities that define the modern aesthetic.
+          </p>
+          <div className="fcard-bio-btns">
+            <button
+              type="button"
+              data-interactive="true"
+              className="fcard-btn fcard-btn--outline"
+              onClick={onScrollToWork}
+              data-ocid="follow.view_projects_button"
+            >
+              View Projects
+            </button>
+            <button
+              type="button"
+              data-interactive="true"
+              className="fcard-btn fcard-btn--solid"
+              onClick={() =>
+                window.open("https://wa.me/919692504800", "_blank")
+              }
+              data-ocid="follow.contact_button"
+            >
+              Contact
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating cursor-follow card */}
+      <div
+        ref={cardRef}
+        className="fcard-card"
+        style={{
+          left: cardPos.x,
+          top: cardPos.y,
+          opacity: cardVisible ? 1 : 0,
+        }}
+        aria-hidden="true"
+      >
+        {FOLLOW_IMAGES.map((src, i) => (
+          <img
+            key={src}
+            ref={(el) => setImgRef(el, i)}
+            src={src}
+            alt=""
+            className={`fcard-img${i === 0 ? " fcard-img--active" : ""}`}
+          />
+        ))}
+      </div>
+
+      {/* Footer labels */}
+      <div className="fcard-footer">
+        <div>Selected Works</div>
+        <div>Scroll to explore</div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Scroll Reveal Hook ── */
 function useScrollReveal() {
   const observed = useRef(new WeakSet<HTMLElement>());
@@ -21,77 +239,6 @@ function useScrollReveal() {
     observer.observe(el);
   }, []);
   return observe;
-}
-
-/* ── Background Slideshow Images ── */
-const SLIDESHOW_IMAGES = [
-  "/assets/images/tyson-herrman-snc-m8kfqkk-unsplash-019d7b60-6b34-7053-a0c3-37eec659c405.jpg",
-  "/assets/images/andrew-neel-cckf4tshauw-unsplash-019d7b60-91c4-7549-a0f8-c2896ffa7ab1.jpg",
-  "/assets/images/carl-heyerdahl-ke0nc8-58mq-unsplash-019d7b60-9433-7475-91b3-42a4233f5707.jpg",
-  "/assets/images/fia-yang-ajxrh39kntc-unsplash-019d7b60-97ff-7485-99a8-6b9bb4e7720a.jpg",
-  "/assets/images/brian-patrick-tagalog-_8hgfbxwd0a-unsplash-019d7b61-0ae7-756f-aa0a-d1b428e756cb.jpg",
-];
-
-/* ── Typing Effect Hook ── */
-const TYPING_LINES = [
-  "brands that sell.",
-  "ads that convert.",
-  "logos that last.",
-];
-const TYPE_SPEED = 80; // ms per character — typing
-const ERASE_SPEED = 40; // ms per character — erasing (faster = snappier)
-const HOLD_PAUSE = 900; // ms to hold the completed word before erasing
-const LINE_PAUSE = 200; // ms gap between erase-end and next word start
-
-function useTypingEffect() {
-  const [displayed, setDisplayed] = useState("");
-
-  useEffect(() => {
-    let active = true;
-
-    async function wait(ms: number) {
-      await new Promise<void>((res) => setTimeout(res, ms));
-    }
-
-    async function run() {
-      let li = 0;
-      while (active) {
-        const target = TYPING_LINES[li] ?? "";
-
-        // Type forward
-        for (let ci = 1; ci <= target.length; ci++) {
-          if (!active) return;
-          setDisplayed(target.slice(0, ci));
-          await wait(TYPE_SPEED);
-        }
-
-        // Hold at full word
-        await wait(HOLD_PAUSE);
-        if (!active) return;
-
-        // Erase backward
-        for (let ci = target.length - 1; ci >= 0; ci--) {
-          if (!active) return;
-          setDisplayed(target.slice(0, ci));
-          await wait(ERASE_SPEED);
-        }
-
-        // Brief pause before next word
-        await wait(LINE_PAUSE);
-        if (!active) return;
-
-        // Advance to next word
-        li = (li + 1) % TYPING_LINES.length;
-      }
-    }
-
-    void run();
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  return displayed;
 }
 
 const INSTAGRAM_URL =
@@ -195,37 +342,54 @@ const ADDONS: Addon[] = [
   },
 ];
 
-/* ── Slideshow Hook ── */
-function useSlideshow(count: number, intervalMs = 5000) {
-  const [current, setCurrent] = useState(0);
-  const [prev, setPrev] = useState<number | null>(null);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent((c) => {
-        setPrev(c);
-        return (c + 1) % count;
-      });
-    }, intervalMs);
-    return () => clearInterval(timer);
-  }, [count, intervalMs]);
-
-  return { current, prev };
-}
-
 export default function App() {
   const reveal = useScrollReveal();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hireModalOpen, setHireModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<PricingTab>("starter");
-  const heroRef = useRef<HTMLElement>(null);
 
-  const typedWord = useTypingEffect();
-  const { current: slideCurrent, prev: slidePrev } = useSlideshow(
-    SLIDESHOW_IMAGES.length,
-    5000,
-  );
+  // Flicker effect refs
+  const interfaceRef = useRef<HTMLSpanElement | null>(null);
+  const architectRef = useRef<HTMLSpanElement | null>(null);
+  const iaWrapRef = useRef<HTMLDivElement | null>(null);
+
+  // Bar-light flicker: Interface flickers first, Architect after 1.4s delay
+  useEffect(() => {
+    const wrapper = iaWrapRef.current;
+    if (!wrapper) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const iEl = interfaceRef.current;
+          const aEl = architectRef.current;
+          if (entry.isIntersecting) {
+            // Remove first so re-entering replays animation
+            if (iEl) {
+              iEl.classList.remove("flicker-interface");
+              // Force reflow to reset animation
+              void (iEl as HTMLElement).offsetWidth;
+              iEl.classList.add("flicker-interface");
+            }
+            if (aEl) {
+              aEl.classList.remove("flicker-architect");
+              void (aEl as HTMLElement).offsetWidth;
+              aEl.classList.add("flicker-architect");
+            }
+          } else {
+            // Cleanup so animation replays on next scroll in
+            if (iEl) iEl.classList.remove("flicker-interface");
+            if (aEl) aEl.classList.remove("flicker-architect");
+          }
+        }
+      },
+      { threshold: 0.3 },
+    );
+
+    observer.observe(wrapper);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -247,7 +411,7 @@ export default function App() {
           <button
             type="button"
             data-ocid="nav.home.link"
-            onClick={() => scrollTo("hero")}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             className="nav-btn"
           >
             Home
@@ -307,69 +471,40 @@ export default function App() {
         </button>
       </header>
 
-      {/* HERO */}
-      <section id="hero" className="hero" ref={heroRef}>
-        {/* Background slideshow — z-index -1, behind canvas */}
-        {SLIDESHOW_IMAGES.map((src, i) => (
-          <div
-            key={src}
-            className="hero-slide"
-            style={{
-              backgroundImage: `url(${src})`,
-              opacity: i === slideCurrent ? 1 : i === slidePrev ? 0 : 0,
-            }}
-          />
-        ))}
-        {/* Hero video background — z-index 0, above slideshow (-1), below overlay (1) */}
-        <video
-          src="/assets/videos/hero-bg.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
-          // @ts-ignore
-          fetchpriority="high"
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            zIndex: 0,
-            pointerEvents: "none",
-            opacity: 1,
-          }}
-        />
-        <div className="hero-overlay" />
-        <div className="hero-text">
-          <h1 className="hero-heading reveal" ref={reveal}>
-            <span className="typing-accent">
-              {typedWord}
-              <span className="typing-cursor typing-cursor--blink" />
-            </span>
-            <br />
-            <span className="typing-static">digital experiences.</span>
-          </h1>
-          <p
-            className="hero-sub reveal"
-            ref={reveal}
-            style={{ transitionDelay: "0.15s" }}
-          >
-            I'm Shuvam Panda — a creative web designer crafting modern, fast and
-            premium websites for brands and creators.
-          </p>
-          <button
-            type="button"
-            onClick={() => scrollTo("work")}
-            className="cta-btn reveal"
-            data-ocid="hero.primary_button"
-            ref={reveal}
-            style={{ transitionDelay: "0.28s" }}
-          >
-            View My Work
-          </button>
+      {/* CURSOR-FOLLOW HERO — first section, video background */}
+      <FollowEffectSection onScrollToWork={() => scrollTo("work")} />
+
+      {/* INTERFACE / ARCHITECT TYPOGRAPHY SECTION */}
+      <section className="min-h-[90vh] flex flex-col justify-end px-6 md:px-12 pt-32 pb-24 border-b border-gray-800 interface-architect-section">
+        <div className="max-w-[1920px] mx-auto w-full">
+          {/* Giant heading — flicker wrapper observed by IntersectionObserver */}
+          <div className="reveal" ref={reveal}>
+            <div ref={iaWrapRef}>
+              <h2
+                className="text-[13vw] leading-[0.8] font-bold tracking-tighter uppercase mb-12"
+                style={{ fontFamily: "inherit" }}
+              >
+                <span ref={interfaceRef} style={{ color: "#F5F5F0" }}>
+                  Interface
+                </span>
+                <br />
+                <span ref={architectRef} className="text-gray-400">
+                  Architect
+                </span>
+              </h2>
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="reveal" ref={reveal}>
+            <p
+              className="text-sm md:text-lg font-medium leading-relaxed max-w-xl"
+              style={{ color: "#ffffff" }}
+            >
+              Freelance designer &amp; developer crafting digital experiences
+              with a focus on immersive motion and typography.
+            </p>
+          </div>
         </div>
       </section>
 
