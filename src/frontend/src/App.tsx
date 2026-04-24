@@ -706,12 +706,17 @@ export default function App() {
                 key={s.title}
                 className="service-card reveal"
                 ref={reveal}
-                style={{ transitionDelay: `${i * 0.1}s` }}
+                style={{ transitionDelay: `${i * 0.08}s` }}
                 data-ocid={`services.item.${i + 1}`}
               >
-                <span className="service-icon">{s.icon}</span>
-                <h3 className="service-title">{s.title}</h3>
-                <p className="service-desc">{s.desc}</p>
+                <div className="service-icon-wrap">
+                  <span className="service-icon">{s.icon}</span>
+                  <span className="service-num">0{i + 1}</span>
+                </div>
+                <div className="service-content">
+                  <h3 className="service-title">{s.title}</h3>
+                  <p className="service-desc">{s.desc}</p>
+                </div>
               </div>
             ))}
           </div>

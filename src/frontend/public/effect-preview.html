@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Effect Preview — Shuvam Creates</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #0a0a0a;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    /* ─── Fixed Warning Banner ─── */
+    .preview-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      background: #1a1a1a;
+      color: #00ffff;
+      padding: 12px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+    }
+
+    /* ─── Cursor Glow ─── */
+    .cursor {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(0, 255, 255, 0.3), transparent);
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: left 0.05s ease, top 0.05s ease;
+      z-index: 1000;
+    }
+
+    /* ─── Hero Section ─── */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at center, #111, #000);
+      padding-top: 50px;
+    }
+
+    .title {
+      font-size: 4rem;
+      font-weight: 700;
+      animation: fadeUp 1s ease forwards;
+      opacity: 0;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      opacity: 0;
+      font-size: 1.2rem;
+      animation: fadeUp 1.5s ease forwards;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .hero-label {
+      color: #00ffff;
+      font-size: 0.8rem;
+      margin-top: 20px;
+      opacity: 0;
+      animation: fadeUp 2s ease forwards;
+    }
+
+    /* ─── Glassmorphism Section ─── */
+    .product-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 20px;
+      background: #0a0a0a;
+    }
+
+    .product-section h2 {
+      color: white;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .card {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      min-width: 280px;
+      max-width: 360px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 40px rgba(0, 255, 255, 0.1);
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 15px 0 10px;
+      color: white;
+    }
+
+    .card-description {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .card-label {
+      color: #00ffff;
+      font-size: 0.75rem;
+      margin-top: 15px;
+      display: block;
+    }
+
+    /* ─── Explanation Section ─── */
+    .explanation-section {
+      background: #111;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .explanation-section h3 {
+      color: white;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .effects-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .effects-list li {
+      color: #ccc;
+      font-size: 0.95rem;
+      margin: 10px 0;
+      line-height: 1.5;
+    }
+
+    .effects-list li span {
+      color: #00ffff;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    .final-note {
+      color: #00ffff;
+      margin-top: 30px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    /* ─── Keyframes ─── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed Warning Banner -->
+  <div class="preview-banner">
+    ⚠️ Effect Preview — Your website will NOT be changed
+  </div>
+
+  <!-- Cursor Glow -->
+  <div class="cursor" id="cursor"></div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1 class="title">Shuvam Creates</h1>
+    <p class="subtitle">Designer &amp; Creator</p>
+    <small class="hero-label">↑ FadeUp animation on title &amp; subtitle</small>
+  </section>
+
+  <!-- Glassmorphism Card Section -->
+  <section class="product-section">
+    <h2>Glassmorphism Card Effect</h2>
+    <div class="card">
+      <div class="card-icon">🎨</div>
+      <div class="card-title">Logo Design</div>
+      <p class="card-description">
+        Creating memorable logos and brand identities that make your business stand out.
+      </p>
+      <small class="card-label">↑ Hover over the card to see scale effect</small>
+    </div>
+  </section>
+
+  <!-- Explanation Section -->
+  <section class="explanation-section">
+    <h3>About These Effects</h3>
+    <ul class="effects-list">
+      <li><span>✓</span> Cursor Glow — Cyan light follows your mouse cursor</li>
+      <li><span>✓</span> FadeUp — Elements smoothly animate from bottom to top on page load</li>
+      <li><span>✓</span> Glassmorphism — Frosted glass card effect with subtle blur and hover zoom</li>
+    </ul>
+    <p class="final-note">Move your mouse around to see the cursor glow effect in action!</p>
+  </section>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+
+    document.addEventListener('mousemove', function(e) {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+
+    // Hide cursor glow when mouse leaves window
+    document.addEventListener('mouseleave', function() {
+      cursor.style.opacity = '0';
+    });
+
+    document.addEventListener('mouseenter', function() {
+      cursor.style.opacity = '1';
+    });
+  </script>
+
+</body>
+</html>

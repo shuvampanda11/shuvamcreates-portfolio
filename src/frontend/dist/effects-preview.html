@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Effects Preview — Shuvam Creates</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+    body { background: #0a0a0a; color: white; overflow-x: hidden; }
+    .cursor { width: 200px; height: 200px; background: radial-gradient(circle, rgba(0,255,255,0.3), transparent); position: fixed; border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); }
+    .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle at center, #111, #000); }
+    .title { font-size: 4rem; animation: fadeUp 1s ease forwards; }
+    .subtitle { margin-top: 10px; opacity: 0.6; animation: fadeUp 1.5s ease forwards; }
+    .product { display: flex; justify-content: center; padding: 100px 20px; gap: 20px; flex-wrap: wrap; }
+    .card { backdrop-filter: blur(20px); background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; text-align: center; transition: 0.3s; max-width: 250px; }
+    .card:hover { transform: scale(1.05); }
+    .card h3 { font-size: 1.2rem; margin-bottom: 10px; }
+    .card p { opacity: 0.7; font-size: 0.9rem; line-height: 1.5; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Preview banner */
+    .preview-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      background: rgba(0, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+      text-align: center;
+      padding: 8px 16px;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: rgba(0, 255, 255, 0.7);
+      pointer-events: none;
+    }
+
+    /* Back link */
+    .back-link-section {
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px 80px;
+      background: #0a0a0a;
+    }
+    .back-link {
+      color: rgba(0, 255, 255, 0.6);
+      text-decoration: none;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 10px 24px;
+      border-radius: 50px;
+      transition: 0.3s;
+    }
+    .back-link:hover {
+      color: rgba(0, 255, 255, 1);
+      border-color: rgba(0, 255, 255, 0.6);
+      background: rgba(0, 255, 255, 0.05);
+    }
+
+    /* Section label */
+    .section-label {
+      text-align: center;
+      padding-top: 60px;
+      padding-bottom: 0;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed cursor glow -->
+  <div class="cursor" id="cursor"></div>
+
+  <!-- Preview-only banner -->
+  <div class="preview-banner">PREVIEW ONLY — Main portfolio not affected</div>
+
+  <!-- Hero section -->
+  <section class="hero">
+    <h1 class="title">Shuvam Creates</h1>
+    <p class="subtitle">brands that sell. ads that convert. logos that last.</p>
+  </section>
+
+  <!-- Cards section -->
+  <p class="section-label">Glassmorphism Cards — hover to see scale effect</p>
+  <section class="product">
+    <div class="card">
+      <h3>Logo Design</h3>
+      <p>Professional logos that make lasting impressions.</p>
+    </div>
+    <div class="card">
+      <h3>Video Ads</h3>
+      <p>Scroll-stopping video ads that convert viewers to clients.</p>
+    </div>
+    <div class="card">
+      <h3>Social Media</h3>
+      <p>Engaging content that builds your brand presence.</p>
+    </div>
+  </section>
+
+  <!-- Back link -->
+  <div class="back-link-section">
+    <a class="back-link" href="/">← View this effect on the live site</a>
+  </div>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+  </script>
+
+</body>
+</html>
