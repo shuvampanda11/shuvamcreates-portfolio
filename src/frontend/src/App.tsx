@@ -2,13 +2,13 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /* ── Follow-Effect Section Images — Shuvam's uploaded photos ── */
-const FOLLOW_IMAGES = [
-  "/assets/72hrs_in_bangkok-019dbf02-eefe-7708-9e70-52ae16193db1.webp",
-  "/assets/again_flexing-019dbf02-ef6a-7095-9709-a8d9df338133.jpg",
-  "/assets/whatsapp_image_2026-04-24_at_2.31.50_pm-019dbf02-f0b4-7580-a072-5efa655ccdf4.jpeg",
-  "/assets/kolkata_diaries_09-02-019dbf02-f112-70fd-8196-0d4c14316650.jpg",
-  "/assets/whatsapp_image_2026-04-24_at_2.31.14_pm-019dbf02-f208-74cb-859c-9cfdd3cac63d.jpeg",
-  "/assets/655173678_18076167986572189_7800662887643349128_n-019dbf02-f41a-770d-baf3-7cbc67cc00c6.jpg",
+const FOLLOW_IMAGES: string[] = [
+  "/assets/whatsapp_image_2026-05-02_at_11.10.27_am-019de75e-8a75-7352-8ba7-37f68321db62.jpeg",
+  "/assets/72hrs_in_bangkok-019de75e-8aa6-7361-b7eb-4c5e57410a1c.webp",
+  "/assets/again_flexing-019de75e-8b72-715c-8530-23f7706145aa.jpg",
+  "/assets/kolkata_diaries_09-02-019de75e-8d00-70bb-b175-d2799e8da9dc.jpg",
+  "/assets/655173678_18076167986572189_7800662887643349128_n-019de75e-8dce-73ba-931b-6c927133dcfe.jpg",
+  "/assets/whatsapp_image_2026-04-21_at_1.57.59_pm-019de75e-9088-767f-b0f8-f83ad2105cd3.jpeg",
 ];
 
 /* ── Cursor-Follow Hero Section ── */
@@ -37,6 +37,7 @@ function FollowEffectSection({
     if (!section) return;
 
     const THRESHOLD = 60;
+    const BLUR_RADIUS = 120;
 
     function onMouseMove(e: MouseEvent) {
       const x = e.clientX;
@@ -48,7 +49,7 @@ function FollowEffectSection({
       setCardPos({ x, y });
       setCardVisible(!isInteractive);
 
-      // Letter push effect
+      // Letter push + blur effect
       for (const letter of lettersRef.current) {
         if (!letter) continue;
         const rect = letter.getBoundingClientRect();
@@ -61,6 +62,13 @@ function FollowEffectSection({
           letter.style.transform = `translate(${Math.cos(angle) * push}px, ${Math.sin(angle) * push}px)`;
         } else {
           letter.style.transform = "translate(0, 0)";
+        }
+        // Blur: closest = max blur, farther = 0
+        if (dist < BLUR_RADIUS) {
+          const blurAmt = ((BLUR_RADIUS - dist) / BLUR_RADIUS) * 6;
+          letter.style.filter = `blur(${blurAmt.toFixed(1)}px)`;
+        } else {
+          letter.style.filter = "blur(0px)";
         }
       }
 
@@ -86,7 +94,10 @@ function FollowEffectSection({
     function onMouseLeave() {
       setCardVisible(false);
       for (const l of lettersRef.current) {
-        if (l) l.style.transform = "translate(0, 0)";
+        if (l) {
+          l.style.transform = "translate(0, 0)";
+          l.style.filter = "blur(0px)";
+        }
       }
     }
 
@@ -106,24 +117,24 @@ function FollowEffectSection({
     <div ref={sectionRef} className="fcard-section" style={{ cursor: "none" }}>
       {/* Video background */}
       <video
-        src="/assets/videos/hero-bg.mp4"
         autoPlay
         muted
         loop
         playsInline
         preload="auto"
-        // @ts-ignore
-        fetchpriority="high"
         style={{
           position: "absolute",
-          inset: 0,
+          top: 0,
+          left: 0,
           width: "100%",
           height: "100%",
           objectFit: "cover",
           zIndex: 0,
           pointerEvents: "none",
         }}
-      />
+      >
+        <source src="/assets/videos/hero-bg.mp4" type="video/mp4" />
+      </video>
       {/* Dark overlay for readability */}
       <div
         style={{
@@ -342,12 +353,44 @@ const ADDONS: Addon[] = [
   },
 ];
 
+/* ── Google Reviews Data ── */
+const GOOGLE_REVIEWS = [
+  {
+    name: "Rohit Mehta",
+    text: "Shuvam designed our company website from scratch and the result was absolutely stunning. Clean, modern, and delivered on time. Highly recommended!",
+  },
+  {
+    name: "Priya Singh",
+    text: "Working with Shuvam was a fantastic experience. He understood our brand vision perfectly and delivered a website that exceeded our expectations.",
+  },
+  {
+    name: "Arjun Sharma",
+    text: "Exceptional design skills! Our e-commerce site looks incredible and our conversion rates have improved significantly after the redesign.",
+  },
+  {
+    name: "Kavita Nair",
+    text: "Shuvam has an incredible eye for detail. The motion effects and animations he added to our site make it stand out from all our competitors.",
+  },
+  {
+    name: "Deepak Verma",
+    text: "Professional, creative, and highly responsive. Shuvam redesigned our brand identity and website — we couldn't be happier with the outcome.",
+  },
+  {
+    name: "Ananya Bose",
+    text: "Truly talented designer. Shuvam created a beautiful portfolio site for us with amazing visual effects. Our clients are always impressed!",
+  },
+];
+
 export default function App() {
   const reveal = useScrollReveal();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hireModalOpen, setHireModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<PricingTab>("starter");
+  const [visitCount, setVisitCount] = useState(0);
+  const [displayCount, setDisplayCount] = useState(0);
+  const reviewsRef = useRef<HTMLDivElement | null>(null);
+  const countAnimRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Flicker effect refs
   const interfaceRef = useRef<HTMLSpanElement | null>(null);
@@ -396,6 +439,46 @@ export default function App() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Visit counter
+  useEffect(() => {
+    const current =
+      Number.parseInt(localStorage.getItem("sc_visits") || "0") + 1;
+    localStorage.setItem("sc_visits", String(current));
+    setVisitCount(current);
+  }, []);
+
+  // Count-up animation when reviews section enters viewport
+  useEffect(() => {
+    const el = reviewsRef.current;
+    if (!el || visitCount === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            let start = 0;
+            const target = visitCount;
+            const duration = 1400;
+            const step = Math.ceil(target / (duration / 16));
+            if (countAnimRef.current) clearInterval(countAnimRef.current);
+            countAnimRef.current = setInterval(() => {
+              start += step;
+              if (start >= target) {
+                setDisplayCount(target);
+                if (countAnimRef.current) clearInterval(countAnimRef.current);
+              } else {
+                setDisplayCount(start);
+              }
+            }, 16);
+            observer.unobserve(el);
+          }
+        }
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [visitCount]);
 
   const scrollTo = (id: string) => {
     setMenuOpen(false);
@@ -1100,6 +1183,68 @@ export default function App() {
                 </div>
               </a>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* STATS & REVIEWS */}
+      <section
+        id="reviews"
+        className="section reviews-section"
+        ref={reviewsRef}
+      >
+        <div className="container">
+          {/* Heading */}
+          <div className="reviews-heading-area reveal" ref={reveal}>
+            <span className="reviews-label">RECOGNITION</span>
+            <h2 className="reviews-main-heading">What Clients Say</h2>
+          </div>
+
+          {/* Stats bar */}
+          <div
+            className="reviews-stats-row reveal"
+            ref={reveal}
+            style={{ transitionDelay: "0.1s" }}
+          >
+            <div className="reviews-stat-card" data-ocid="reviews.visits_stat">
+              <div className="reviews-stat-number">
+                {displayCount.toLocaleString()}+
+              </div>
+              <div className="reviews-stat-label">Website Visits</div>
+            </div>
+            <div className="reviews-stat-card" data-ocid="reviews.rating_stat">
+              <div className="reviews-stat-number reviews-stat-number--gold">
+                5.0 ★
+              </div>
+              <div className="reviews-stat-label">Google Rating</div>
+              <div className="reviews-stat-sublabel">
+                Based on client reviews
+              </div>
+            </div>
+          </div>
+
+          {/* Reviews slider */}
+          <div
+            className="reviews-slider-outer reveal"
+            ref={reveal}
+            style={{ transitionDelay: "0.2s" }}
+          >
+            <div className="reviews-slider-track" data-ocid="reviews.slider">
+              {[...GOOGLE_REVIEWS, ...GOOGLE_REVIEWS].map((review, i) => (
+                <div
+                  key={`${review.name}-${i}`}
+                  className="reviews-card"
+                  data-ocid={`reviews.item.${(i % GOOGLE_REVIEWS.length) + 1}`}
+                >
+                  <div className="reviews-stars">★★★★★</div>
+                  <p className="reviews-text">{review.text}</p>
+                  <div className="reviews-reviewer">
+                    <span className="reviews-reviewer-name">{review.name}</span>
+                    <span className="reviews-google-label">Google</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

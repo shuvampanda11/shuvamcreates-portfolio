@@ -3,7 +3,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 @layer base {
   :root {
     --radius: 0.625rem;
@@ -1402,6 +1401,214 @@
   text-shadow: 0 0 16px rgba(184, 115, 51, 0.6);
 }
 
+/* ============================
+   STATS & REVIEWS SECTION
+   ============================ */
+
+.reviews-section {
+  background: #0a0a0a;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.reviews-heading-area {
+  margin-bottom: 48px;
+}
+
+.reviews-label {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(167, 139, 250, 0.75);
+  margin-bottom: 12px;
+}
+
+.reviews-main-heading {
+  font-family: "Bricolage Grotesque", "Poppins", sans-serif;
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+/* Stats bar */
+.reviews-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 560px;
+  margin-bottom: 56px;
+}
+
+@media (max-width: 480px) {
+  .reviews-stats-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reviews-stat-card {
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reviews-stat-number {
+  font-family: "Bricolage Grotesque", "Poppins", sans-serif;
+  font-size: clamp(36px, 4vw, 52px);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.reviews-stat-number--gold {
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.reviews-stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.reviews-stat-sublabel {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 2px;
+}
+
+/* Reviews slider */
+.reviews-slider-outer {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  margin: 0 -90px;
+  padding: 0 90px;
+}
+
+@media (max-width: 900px) {
+  .reviews-slider-outer {
+    margin: 0 -28px;
+    padding: 0 28px;
+  }
+}
+
+.reviews-slider-outer::before,
+.reviews-slider-outer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.reviews-slider-outer::before {
+  left: 0;
+  background: linear-gradient(to right, #0a0a0a, transparent);
+}
+
+.reviews-slider-outer::after {
+  right: 0;
+  background: linear-gradient(to left, #0a0a0a, transparent);
+}
+
+.reviews-slider-track {
+  display: flex;
+  width: max-content;
+  animation: reviewsScrollLeft 32s linear infinite;
+  gap: 24px;
+}
+
+.reviews-slider-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes reviewsScrollLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reviews-slider-track {
+    animation: none;
+  }
+}
+
+.reviews-card {
+  width: 320px;
+  flex-shrink: 0;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reviews-card:hover {
+  border-color: rgba(167, 139, 250, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 16px rgba(167, 139, 250, 0.08);
+}
+
+.reviews-stars {
+  font-size: 18px;
+  color: #ffd700;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+.reviews-text {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.75;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.reviews-reviewer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.reviews-reviewer-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.reviews-google-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+}
+
 /* FOOTER */
 .footer {
   background: #000;
@@ -1828,8 +2035,9 @@
 
 .fcard-letter {
   display: inline-block;
-  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  will-change: transform;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), filter 0.4s
+    cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform, filter;
 }
 
 /* Bio row */
