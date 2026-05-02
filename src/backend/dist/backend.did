@@ -1,2 +1,4 @@
 service : {
+  getPageViews: () -> (nat) query;
+  recordPageView: () -> (nat);
 }

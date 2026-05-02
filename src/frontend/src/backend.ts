@@ -90,9 +90,39 @@ export class ExternalBlob {
     }
 }
 export interface backendInterface {
+    getPageViews(): Promise<bigint>;
+    recordPageView(): Promise<bigint>;
 }
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async getPageViews(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPageViews();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPageViews();
+            return result;
+        }
+    }
+    async recordPageView(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.recordPageView();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.recordPageView();
+            return result;
+        }
+    }
 }
 export interface CreateActorOptions {
     agent?: Agent;

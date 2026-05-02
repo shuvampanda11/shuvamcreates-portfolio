@@ -8,4 +8,6 @@ export interface None {
 }
 export type Option<T> = Some<T> | None;
 export interface backendInterface {
+    getPageViews(): Promise<bigint>;
+    recordPageView(): Promise<bigint>;
 }

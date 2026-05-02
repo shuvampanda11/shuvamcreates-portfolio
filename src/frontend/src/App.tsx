@@ -1,14 +1,16 @@
+import { createActor } from "@/backend";
+import { useActor } from "@caffeineai/core-infrastructure";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /* ── Follow-Effect Section Images — Shuvam's uploaded photos ── */
 const FOLLOW_IMAGES: string[] = [
-  "/assets/whatsapp_image_2026-05-02_at_11.10.27_am-019de75e-8a75-7352-8ba7-37f68321db62.jpeg",
-  "/assets/72hrs_in_bangkok-019de75e-8aa6-7361-b7eb-4c5e57410a1c.webp",
-  "/assets/again_flexing-019de75e-8b72-715c-8530-23f7706145aa.jpg",
-  "/assets/kolkata_diaries_09-02-019de75e-8d00-70bb-b175-d2799e8da9dc.jpg",
-  "/assets/655173678_18076167986572189_7800662887643349128_n-019de75e-8dce-73ba-931b-6c927133dcfe.jpg",
-  "/assets/whatsapp_image_2026-04-21_at_1.57.59_pm-019de75e-9088-767f-b0f8-f83ad2105cd3.jpeg",
+  "/assets/whatsapp_image_2026-05-02_at_11.10.27_am-019de929-5a45-723a-b3f4-5ee366577081.jpeg",
+  "/assets/72hrs_in_bangkok-019de929-5b34-7473-b48c-900af1f47d9e.webp",
+  "/assets/whatsapp_image_2026-04-24_at_2.31.14_pm-019de929-5f80-70bb-85fb-49dac1409ff5.jpeg",
+  "/assets/655173678_18076167986572189_7800662887643349128_n-019de929-5f67-749a-b4bf-2917b1550b36.jpg",
+  "/assets/kolkata_diaries_09-02-019de929-5ff9-73d5-9bff-e06ddb1a606c.jpg",
+  "/assets/whatsapp_image_2026-04-21_at_1.57.59_pm-019de929-60db-77c8-abef-68d29b29e3f4.jpeg",
 ];
 
 /* ── Cursor-Follow Hero Section ── */
@@ -356,30 +358,54 @@ const ADDONS: Addon[] = [
 /* ── Google Reviews Data ── */
 const GOOGLE_REVIEWS = [
   {
-    name: "Rohit Mehta",
-    text: "Shuvam designed our company website from scratch and the result was absolutely stunning. Clean, modern, and delivered on time. Highly recommended!",
+    name: "Priyanka Priyadarshini",
+    rating: 5,
+    text: "Absolutely loved the work! The designer was patient, creative, and responsive throughout the process.",
   },
   {
-    name: "Priya Singh",
-    text: "Working with Shuvam was a fantastic experience. He understood our brand vision perfectly and delivered a website that exceeded our expectations.",
+    name: "Nurulla Chowdhury",
+    rating: 4.5,
+    text: "Great experience working together!",
   },
   {
-    name: "Arjun Sharma",
-    text: "Exceptional design skills! Our e-commerce site looks incredible and our conversion rates have improved significantly after the redesign.",
+    name: "Dipayan Dutta",
+    rating: 5,
+    text: "Excellent work and very professional.",
   },
   {
-    name: "Kavita Nair",
-    text: "Shuvam has an incredible eye for detail. The motion effects and animations he added to our site make it stand out from all our competitors.",
+    name: "Mitarani Panda",
+    rating: 4.7,
+    text: "Good service nd best design",
   },
   {
-    name: "Deepak Verma",
-    text: "Professional, creative, and highly responsive. Shuvam redesigned our brand identity and website — we couldn't be happier with the outcome.",
+    name: "Subhashree Panda",
+    rating: 5,
+    text: "Excellent website designs!!!!",
   },
   {
-    name: "Ananya Bose",
-    text: "Truly talented designer. Shuvam created a beautiful portfolio site for us with amazing visual effects. Our clients are always impressed!",
+    name: "biswajit mohapatra",
+    rating: 4.8,
+    text: "A passionate web designer with a knack for creating clean, modern, and effective web experiences. Highly recommended if you're looking for quality design work.",
+  },
+  {
+    name: "Malay Sarkar",
+    rating: 4.5,
+    text: "Highly satisfied with the results!",
   },
 ];
+
+/* ── Render star rating (supports half stars) ── */
+function renderStars(rating: number): string {
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.3 && rating % 1 < 0.8;
+  const nearFull = rating % 1 >= 0.8;
+  const actualFull = nearFull ? full + 1 : full;
+  const stars =
+    "★".repeat(actualFull) +
+    (half ? "½" : "") +
+    "☆".repeat(5 - actualFull - (half ? 1 : 0));
+  return stars;
+}
 
 export default function App() {
   const reveal = useScrollReveal();
@@ -440,13 +466,21 @@ export default function App() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Visit counter
+  // Backend actor for page views
+  const { actor } = useActor(createActor);
+
+  // Record page view via backend on mount
   useEffect(() => {
-    const current =
-      Number.parseInt(localStorage.getItem("sc_visits") || "0") + 1;
-    localStorage.setItem("sc_visits", String(current));
-    setVisitCount(current);
-  }, []);
+    if (!actor) return;
+    actor
+      .recordPageView()
+      .then((count) => {
+        setVisitCount(Number(count));
+      })
+      .catch(() => {
+        // fallback: keep count at 0
+      });
+  }, [actor]);
 
   // Count-up animation when reviews section enters viewport
   useEffect(() => {
@@ -1210,11 +1244,11 @@ export default function App() {
               <div className="reviews-stat-number">
                 {displayCount.toLocaleString()}+
               </div>
-              <div className="reviews-stat-label">Website Visits</div>
+              <div className="reviews-stat-label">Website VIEWS</div>
             </div>
             <div className="reviews-stat-card" data-ocid="reviews.rating_stat">
               <div className="reviews-stat-number reviews-stat-number--gold">
-                5.0 ★
+                4.8 ★
               </div>
               <div className="reviews-stat-label">Google Rating</div>
               <div className="reviews-stat-sublabel">
@@ -1236,7 +1270,9 @@ export default function App() {
                   className="reviews-card"
                   data-ocid={`reviews.item.${(i % GOOGLE_REVIEWS.length) + 1}`}
                 >
-                  <div className="reviews-stars">★★★★★</div>
+                  <div className="reviews-stars">
+                    {renderStars(review.rating)}
+                  </div>
                   <p className="reviews-text">{review.text}</p>
                   <div className="reviews-reviewer">
                     <span className="reviews-reviewer-name">{review.name}</span>
@@ -1391,17 +1427,7 @@ export default function App() {
 
       {/* FOOTER */}
       <footer className="footer">
-        <p>
-          © {new Date().getFullYear()}. Built with ❤️ using{" "}
-          <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-            target="_blank"
-            rel="noreferrer"
-            className="footer-link"
-          >
-            caffeine.ai
-          </a>
-        </p>
+        <p>© {new Date().getFullYear()}. Built with ❤️@shuvamcreates.pvt.ltd</p>
       </footer>
 
       {/* HIRE ME MODAL */}
