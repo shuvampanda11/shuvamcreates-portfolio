@@ -5,12 +5,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 /* ── Follow-Effect Section Images — Shuvam's uploaded photos ── */
 const FOLLOW_IMAGES: string[] = [
-  "/assets/whatsapp_image_2026-05-02_at_11.10.27_am-019de929-5a45-723a-b3f4-5ee366577081.jpeg",
-  "/assets/72hrs_in_bangkok-019de929-5b34-7473-b48c-900af1f47d9e.webp",
-  "/assets/whatsapp_image_2026-04-24_at_2.31.14_pm-019de929-5f80-70bb-85fb-49dac1409ff5.jpeg",
-  "/assets/655173678_18076167986572189_7800662887643349128_n-019de929-5f67-749a-b4bf-2917b1550b36.jpg",
-  "/assets/kolkata_diaries_09-02-019de929-5ff9-73d5-9bff-e06ddb1a606c.jpg",
-  "/assets/whatsapp_image_2026-04-21_at_1.57.59_pm-019de929-60db-77c8-abef-68d29b29e3f4.jpeg",
+  "/assets/whatsapp_image_2026-05-02_at_11.10.27_am-019e0d04-112e-747e-b60e-a8da97529792.jpeg",
+  "/assets/72hrs_in_bangkok-019e0d04-1377-730c-b34f-a7f254de1c9b.webp",
+  "/assets/whatsapp_image_2026-04-24_at_2.31.14_pm-019e0d04-177a-722c-a9c6-3651d54345da.jpeg",
+  "/assets/kolkata_diaries_09-02-019e0d04-191f-70d4-9bb8-618a408abc68.jpg",
+  "/assets/655173678_18076167986572189_7800662887643349128_n-019e0d04-1b9a-714f-a9b0-2ade6091c975.jpg",
+  "/assets/whatsapp_image_2026-04-21_at_1.57.59_pm-019e0d04-1c6c-7276-98cf-8b1e4e425df0.jpeg",
 ];
 
 /* ── Cursor-Follow Hero Section ── */
@@ -1140,7 +1140,15 @@ export default function App() {
           >
             Real projects. Real results. Delivered with care.
           </p>
-          <div className="client-cards-row" data-ocid="work.list">
+        </div>
+        {/* Carousel — full-width breakout */}
+        <div
+          className="clients-carousel-outer reveal"
+          ref={reveal}
+          style={{ transitionDelay: "0.2s" }}
+          data-ocid="work.list"
+        >
+          <div className="clients-carousel-track">
             {[
               {
                 img: "/assets/generated/photography-portfolio-preview.dim_420x260.jpg",
@@ -1148,6 +1156,7 @@ export default function App() {
                 tag: "Web Design",
                 href: WORK_URL,
                 ocid: "work.item.1",
+                placeholder: null,
               },
               {
                 img: "/assets/images/newlife-logo.png",
@@ -1156,6 +1165,7 @@ export default function App() {
                 tag: "Web Dev",
                 href: "https://newlife-home-health-care-f0x.caffeine.xyz",
                 ocid: "work.item.2",
+                placeholder: null,
               },
               {
                 img: null,
@@ -1164,6 +1174,7 @@ export default function App() {
                 tag: "AI / Web App",
                 href: "https://v0-agentic-build-orchestrate-a-lilac.vercel.app/",
                 ocid: "work.item.3",
+                placeholder: "ai",
               },
               {
                 img: null,
@@ -1172,17 +1183,90 @@ export default function App() {
                 tag: "Web Design",
                 href: "https://hot-copper-rfv-draft.caffeine.xyz",
                 ocid: "work.item.4",
+                placeholder: "copper",
               },
+              {
+                img: null,
+                imgClass: "client-card-img--cake-placeholder",
+                title: "Cake & Bake",
+                tag: "Web Design",
+                href: "https://cakeandbake-nt2.caffeine.xyz",
+                ocid: "work.item.5",
+                placeholder: "cake",
+              },
+              {
+                img: null,
+                imgClass: "client-card-img--mehndi-placeholder",
+                title: "Anil Mehendi Art",
+                tag: "Web Design",
+                href: "https://www.anilmehndiart.com",
+                ocid: "work.item.6",
+                placeholder: "mehndi",
+              },
+              // Duplicate set for seamless loop
+              ...[
+                {
+                  img: "/assets/generated/photography-portfolio-preview.dim_420x260.jpg",
+                  title: "Photography Portfolio",
+                  tag: "Web Design",
+                  href: WORK_URL,
+                  ocid: "work.item.1",
+                  placeholder: null,
+                },
+                {
+                  img: "/assets/images/newlife-logo.png",
+                  imgClass: "client-card-img--logo",
+                  title: "New Life Home Health Care",
+                  tag: "Web Dev",
+                  href: "https://newlife-home-health-care-f0x.caffeine.xyz",
+                  ocid: "work.item.2",
+                  placeholder: null,
+                },
+                {
+                  img: null,
+                  imgClass: "client-card-img--ai-placeholder",
+                  title: "खुशबू perfume",
+                  tag: "AI / Web App",
+                  href: "https://v0-agentic-build-orchestrate-a-lilac.vercel.app/",
+                  ocid: "work.item.3",
+                  placeholder: "ai",
+                },
+                {
+                  img: null,
+                  imgClass: "client-card-img--copper-placeholder",
+                  title: "Hot Copper Studio",
+                  tag: "Web Design",
+                  href: "https://hot-copper-rfv-draft.caffeine.xyz",
+                  ocid: "work.item.4",
+                  placeholder: "copper",
+                },
+                {
+                  img: null,
+                  imgClass: "client-card-img--cake-placeholder",
+                  title: "Cake & Bake",
+                  tag: "Web Design",
+                  href: "https://cakeandbake-nt2.caffeine.xyz",
+                  ocid: "work.item.5",
+                  placeholder: "cake",
+                },
+                {
+                  img: null,
+                  imgClass: "client-card-img--mehndi-placeholder",
+                  title: "Anil Mehendi Art",
+                  tag: "Web Design",
+                  href: "https://www.anilmehndiart.com",
+                  ocid: "work.item.6",
+                  placeholder: "mehndi",
+                },
+              ],
             ].map((project, i) => (
               <a
-                key={project.title}
+                key={`${project.title}-${i}`}
                 href={project.href}
                 target="_blank"
                 rel="noreferrer"
-                className="client-card reveal"
-                ref={reveal}
-                style={{ transitionDelay: `${i * 0.1}s` }}
-                data-ocid={project.ocid}
+                className="client-card client-card--carousel"
+                data-ocid={i < 6 ? project.ocid : undefined}
               >
                 {/* Thumbnail */}
                 <div className="client-card-thumb">
@@ -1193,15 +1277,26 @@ export default function App() {
                       className={`client-card-img${project.imgClass ? ` ${project.imgClass}` : ""}`}
                       loading="lazy"
                     />
-                  ) : project.imgClass === "client-card-img--ai-placeholder" ? (
+                  ) : project.placeholder === "ai" ? (
                     <div className="client-card-img--ai-placeholder">
                       <span className="ai-placeholder-label">खुशबू perfume</span>
                     </div>
-                  ) : project.imgClass ===
-                    "client-card-img--copper-placeholder" ? (
+                  ) : project.placeholder === "copper" ? (
                     <div className="client-card-img--copper-placeholder">
                       <span className="copper-placeholder-label">
                         Hot Copper
+                      </span>
+                    </div>
+                  ) : project.placeholder === "cake" ? (
+                    <div className="client-card-img--cake-placeholder">
+                      <span className="cake-placeholder-label">
+                        Cake &amp; Bake
+                      </span>
+                    </div>
+                  ) : project.placeholder === "mehndi" ? (
+                    <div className="client-card-img--mehndi-placeholder">
+                      <span className="mehndi-placeholder-label">
+                        Anil Mehendi
                       </span>
                     </div>
                   ) : (
@@ -1256,31 +1351,31 @@ export default function App() {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Reviews slider */}
-          <div
-            className="reviews-slider-outer reveal"
-            ref={reveal}
-            style={{ transitionDelay: "0.2s" }}
-          >
-            <div className="reviews-slider-track" data-ocid="reviews.slider">
-              {[...GOOGLE_REVIEWS, ...GOOGLE_REVIEWS].map((review, i) => (
-                <div
-                  key={`${review.name}-${i}`}
-                  className="reviews-card"
-                  data-ocid={`reviews.item.${(i % GOOGLE_REVIEWS.length) + 1}`}
-                >
-                  <div className="reviews-stars">
-                    {renderStars(review.rating)}
-                  </div>
-                  <p className="reviews-text">{review.text}</p>
-                  <div className="reviews-reviewer">
-                    <span className="reviews-reviewer-name">{review.name}</span>
-                    <span className="reviews-google-label">Google</span>
-                  </div>
+        {/* Reviews slider — full viewport width, outside .container */}
+        <div
+          className="reviews-slider-outer reveal"
+          ref={reveal}
+          style={{ transitionDelay: "0.2s" }}
+        >
+          <div className="reviews-slider-track" data-ocid="reviews.slider">
+            {[...GOOGLE_REVIEWS, ...GOOGLE_REVIEWS].map((review, i) => (
+              <div
+                key={`${review.name}-${i}`}
+                className="reviews-card"
+                data-ocid={`reviews.item.${(i % GOOGLE_REVIEWS.length) + 1}`}
+              >
+                <div className="reviews-stars">
+                  {renderStars(review.rating)}
                 </div>
-              ))}
-            </div>
+                <p className="reviews-text">{review.text}</p>
+                <div className="reviews-reviewer">
+                  <span className="reviews-reviewer-name">{review.name}</span>
+                  <span className="reviews-google-label">Google</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

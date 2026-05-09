@@ -35381,12 +35381,12 @@ const featureBundle = {
 };
 const motion = /* @__PURE__ */ createMotionProxy(featureBundle, createDomVisualElement);
 const FOLLOW_IMAGES = [
-  "/assets/whatsapp_image_2026-05-02_at_11.10.27_am-019de929-5a45-723a-b3f4-5ee366577081.jpeg",
-  "/assets/72hrs_in_bangkok-019de929-5b34-7473-b48c-900af1f47d9e.webp",
-  "/assets/whatsapp_image_2026-04-24_at_2.31.14_pm-019de929-5f80-70bb-85fb-49dac1409ff5.jpeg",
-  "/assets/655173678_18076167986572189_7800662887643349128_n-019de929-5f67-749a-b4bf-2917b1550b36.jpg",
-  "/assets/kolkata_diaries_09-02-019de929-5ff9-73d5-9bff-e06ddb1a606c.jpg",
-  "/assets/whatsapp_image_2026-04-21_at_1.57.59_pm-019de929-60db-77c8-abef-68d29b29e3f4.jpeg"
+  "/assets/whatsapp_image_2026-05-02_at_11.10.27_am-019e0d04-112e-747e-b60e-a8da97529792.jpeg",
+  "/assets/72hrs_in_bangkok-019e0d04-1377-730c-b34f-a7f254de1c9b.webp",
+  "/assets/whatsapp_image_2026-04-24_at_2.31.14_pm-019e0d04-177a-722c-a9c6-3651d54345da.jpeg",
+  "/assets/kolkata_diaries_09-02-019e0d04-191f-70d4-9bb8-618a408abc68.jpg",
+  "/assets/655173678_18076167986572189_7800662887643349128_n-019e0d04-1b9a-714f-a9b0-2ade6091c975.jpg",
+  "/assets/whatsapp_image_2026-04-21_at_1.57.59_pm-019e0d04-1c6c-7276-98cf-8b1e4e425df0.jpeg"
 ];
 function FollowEffectSection({
   onScrollToWork
@@ -36418,118 +36418,207 @@ function App() {
         ] })
       }
     ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "section",
       {
         id: "work",
         className: "section section--texture section--texture-2 clients-section",
-        children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "container", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "section-heading reveal", ref: reveal, children: "Our Clients" }),
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "container", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "section-heading reveal", ref: reveal, children: "Our Clients" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "p",
+              {
+                className: "clients-subtitle reveal",
+                ref: reveal,
+                style: { transitionDelay: "0.1s" },
+                children: "Real projects. Real results. Delivered with care."
+              }
+            )
+          ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "p",
+            "div",
             {
-              className: "clients-subtitle reveal",
+              className: "clients-carousel-outer reveal",
               ref: reveal,
-              style: { transitionDelay: "0.1s" },
-              children: "Real projects. Real results. Delivered with care."
+              style: { transitionDelay: "0.2s" },
+              "data-ocid": "work.list",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "clients-carousel-track", children: [
+                {
+                  img: "/assets/generated/photography-portfolio-preview.dim_420x260.jpg",
+                  title: "Photography Portfolio",
+                  tag: "Web Design",
+                  href: WORK_URL,
+                  ocid: "work.item.1",
+                  placeholder: null
+                },
+                {
+                  img: "/assets/images/newlife-logo.png",
+                  imgClass: "client-card-img--logo",
+                  title: "New Life Home Health Care",
+                  tag: "Web Dev",
+                  href: "https://newlife-home-health-care-f0x.caffeine.xyz",
+                  ocid: "work.item.2",
+                  placeholder: null
+                },
+                {
+                  img: null,
+                  imgClass: "client-card-img--ai-placeholder",
+                  title: "खुशबू perfume",
+                  tag: "AI / Web App",
+                  href: "https://v0-agentic-build-orchestrate-a-lilac.vercel.app/",
+                  ocid: "work.item.3",
+                  placeholder: "ai"
+                },
+                {
+                  img: null,
+                  imgClass: "client-card-img--copper-placeholder",
+                  title: "Hot Copper Studio",
+                  tag: "Web Design",
+                  href: "https://hot-copper-rfv-draft.caffeine.xyz",
+                  ocid: "work.item.4",
+                  placeholder: "copper"
+                },
+                {
+                  img: null,
+                  imgClass: "client-card-img--cake-placeholder",
+                  title: "Cake & Bake",
+                  tag: "Web Design",
+                  href: "https://cakeandbake-nt2.caffeine.xyz",
+                  ocid: "work.item.5",
+                  placeholder: "cake"
+                },
+                {
+                  img: null,
+                  imgClass: "client-card-img--mehndi-placeholder",
+                  title: "Anil Mehendi Art",
+                  tag: "Web Design",
+                  href: "https://www.anilmehndiart.com",
+                  ocid: "work.item.6",
+                  placeholder: "mehndi"
+                },
+                // Duplicate set for seamless loop
+                ...[
+                  {
+                    img: "/assets/generated/photography-portfolio-preview.dim_420x260.jpg",
+                    title: "Photography Portfolio",
+                    tag: "Web Design",
+                    href: WORK_URL,
+                    ocid: "work.item.1",
+                    placeholder: null
+                  },
+                  {
+                    img: "/assets/images/newlife-logo.png",
+                    imgClass: "client-card-img--logo",
+                    title: "New Life Home Health Care",
+                    tag: "Web Dev",
+                    href: "https://newlife-home-health-care-f0x.caffeine.xyz",
+                    ocid: "work.item.2",
+                    placeholder: null
+                  },
+                  {
+                    img: null,
+                    imgClass: "client-card-img--ai-placeholder",
+                    title: "खुशबू perfume",
+                    tag: "AI / Web App",
+                    href: "https://v0-agentic-build-orchestrate-a-lilac.vercel.app/",
+                    ocid: "work.item.3",
+                    placeholder: "ai"
+                  },
+                  {
+                    img: null,
+                    imgClass: "client-card-img--copper-placeholder",
+                    title: "Hot Copper Studio",
+                    tag: "Web Design",
+                    href: "https://hot-copper-rfv-draft.caffeine.xyz",
+                    ocid: "work.item.4",
+                    placeholder: "copper"
+                  },
+                  {
+                    img: null,
+                    imgClass: "client-card-img--cake-placeholder",
+                    title: "Cake & Bake",
+                    tag: "Web Design",
+                    href: "https://cakeandbake-nt2.caffeine.xyz",
+                    ocid: "work.item.5",
+                    placeholder: "cake"
+                  },
+                  {
+                    img: null,
+                    imgClass: "client-card-img--mehndi-placeholder",
+                    title: "Anil Mehendi Art",
+                    tag: "Web Design",
+                    href: "https://www.anilmehndiart.com",
+                    ocid: "work.item.6",
+                    placeholder: "mehndi"
+                  }
+                ]
+              ].map((project, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "a",
+                {
+                  href: project.href,
+                  target: "_blank",
+                  rel: "noreferrer",
+                  className: "client-card client-card--carousel",
+                  "data-ocid": i < 6 ? project.ocid : void 0,
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "client-card-thumb", children: [
+                      project.img ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "img",
+                        {
+                          src: project.img,
+                          alt: project.title,
+                          className: `client-card-img${project.imgClass ? ` ${project.imgClass}` : ""}`,
+                          loading: "lazy"
+                        }
+                      ) : project.placeholder === "ai" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "client-card-img--ai-placeholder", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ai-placeholder-label", children: "खुशबू perfume" }) }) : project.placeholder === "copper" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "client-card-img--copper-placeholder", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "copper-placeholder-label", children: "Hot Copper" }) }) : project.placeholder === "cake" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "client-card-img--cake-placeholder", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "cake-placeholder-label", children: "Cake & Bake" }) }) : project.placeholder === "mehndi" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "client-card-img--mehndi-placeholder", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mehndi-placeholder-label", children: "Anil Mehendi" }) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "client-card-placeholder", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "client-card-placeholder-icon", children: "◈" }) }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "client-card-tag", children: project.tag })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "client-card-header", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "client-card-title", children: project.title }) })
+                  ]
+                },
+                `${project.title}-${i}`
+              )) })
             }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "client-cards-row", "data-ocid": "work.list", children: [
-            {
-              img: "/assets/generated/photography-portfolio-preview.dim_420x260.jpg",
-              title: "Photography Portfolio",
-              tag: "Web Design",
-              href: WORK_URL,
-              ocid: "work.item.1"
-            },
-            {
-              img: "/assets/images/newlife-logo.png",
-              imgClass: "client-card-img--logo",
-              title: "New Life Home Health Care",
-              tag: "Web Dev",
-              href: "https://newlife-home-health-care-f0x.caffeine.xyz",
-              ocid: "work.item.2"
-            },
-            {
-              img: null,
-              imgClass: "client-card-img--ai-placeholder",
-              title: "खुशबू perfume",
-              tag: "AI / Web App",
-              href: "https://v0-agentic-build-orchestrate-a-lilac.vercel.app/",
-              ocid: "work.item.3"
-            },
-            {
-              img: null,
-              imgClass: "client-card-img--copper-placeholder",
-              title: "Hot Copper Studio",
-              tag: "Web Design",
-              href: "https://hot-copper-rfv-draft.caffeine.xyz",
-              ocid: "work.item.4"
-            }
-          ].map((project, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "a",
-            {
-              href: project.href,
-              target: "_blank",
-              rel: "noreferrer",
-              className: "client-card reveal",
-              ref: reveal,
-              style: { transitionDelay: `${i * 0.1}s` },
-              "data-ocid": project.ocid,
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "client-card-thumb", children: [
-                  project.img ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    "img",
-                    {
-                      src: project.img,
-                      alt: project.title,
-                      className: `client-card-img${project.imgClass ? ` ${project.imgClass}` : ""}`,
-                      loading: "lazy"
-                    }
-                  ) : project.imgClass === "client-card-img--ai-placeholder" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "client-card-img--ai-placeholder", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ai-placeholder-label", children: "खुशबू perfume" }) }) : project.imgClass === "client-card-img--copper-placeholder" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "client-card-img--copper-placeholder", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "copper-placeholder-label", children: "Hot Copper" }) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "client-card-placeholder", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "client-card-placeholder-icon", children: "◈" }) }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "client-card-tag", children: project.tag })
-                ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "client-card-header", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "client-card-title", children: project.title }) })
-              ]
-            },
-            project.title
-          )) })
-        ] })
+          )
+        ]
       }
     ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "section",
       {
         id: "reviews",
         className: "section reviews-section",
         ref: reviewsRef,
-        children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "container", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "reviews-heading-area reveal", ref: reveal, children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "reviews-label", children: "RECOGNITION" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "reviews-main-heading", children: "What Clients Say" })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "div",
-            {
-              className: "reviews-stats-row reveal",
-              ref: reveal,
-              style: { transitionDelay: "0.1s" },
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "reviews-stat-card", "data-ocid": "reviews.visits_stat", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "reviews-stat-number", children: [
-                    displayCount.toLocaleString(),
-                    "+"
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "container", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "reviews-heading-area reveal", ref: reveal, children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "reviews-label", children: "RECOGNITION" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "reviews-main-heading", children: "What Clients Say" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "reviews-stats-row reveal",
+                ref: reveal,
+                style: { transitionDelay: "0.1s" },
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "reviews-stat-card", "data-ocid": "reviews.visits_stat", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "reviews-stat-number", children: [
+                      displayCount.toLocaleString(),
+                      "+"
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "reviews-stat-label", children: "Website VIEWS" })
                   ] }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "reviews-stat-label", children: "Website VIEWS" })
-                ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "reviews-stat-card", "data-ocid": "reviews.rating_stat", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "reviews-stat-number reviews-stat-number--gold", children: "4.8 ★" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "reviews-stat-label", children: "Google Rating" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "reviews-stat-sublabel", children: "Based on client reviews" })
-                ] })
-              ]
-            }
-          ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "reviews-stat-card", "data-ocid": "reviews.rating_stat", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "reviews-stat-number reviews-stat-number--gold", children: "4.8 ★" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "reviews-stat-label", children: "Google Rating" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "reviews-stat-sublabel", children: "Based on client reviews" })
+                  ] })
+                ]
+              }
+            )
+          ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             "div",
             {
@@ -36554,7 +36643,7 @@ function App() {
               )) })
             }
           )
-        ] })
+        ]
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(

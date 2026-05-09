@@ -726,7 +726,7 @@
   margin: 0;
 }
 
-/* OUR CLIENTS — compact card layout */
+/* OUR CLIENTS — carousel layout */
 .clients-section {
   text-align: center;
 }
@@ -743,19 +743,72 @@
   margin-bottom: 18px;
 }
 
-/* Row of compact cards */
-.client-cards-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 16px;
+/* Carousel outer — full-width breakout */
+.clients-carousel-outer {
+  overflow: hidden;
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 20px 0 32px;
 }
 
-/* Each card */
+/* Fade edges */
+.clients-carousel-outer::before,
+.clients-carousel-outer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.clients-carousel-outer::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(13, 13, 13, 0.95), transparent);
+}
+
+.clients-carousel-outer::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(13, 13, 13, 0.95), transparent);
+}
+
+/* Scrolling track — auto-animates, pauses on hover */
+.clients-carousel-track {
+  display: flex;
+  width: max-content;
+  gap: 16px;
+  padding: 0 40px;
+  animation: clientsScrollLeft 28s linear infinite;
+}
+
+.clients-carousel-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes clientsScrollLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clients-carousel-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Each card — base */
 .client-card {
   position: relative;
-  width: 280px;
-  flex-shrink: 0;
   background: rgba(22, 22, 22, 0.88);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -776,11 +829,17 @@
   transform: scale(1.05);
 }
 
+/* Carousel card — smaller size */
+.client-card--carousel {
+  width: 230px;
+  flex-shrink: 0;
+}
+
 /* Thumbnail area */
 .client-card-thumb {
   position: relative;
   width: 100%;
-  height: 148px;
+  height: 120px;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -906,6 +965,93 @@
   line-height: 1.4;
   flex: 1;
   min-width: 0;
+}
+
+/* Cake & Bake placeholder thumbnail */
+.client-card-img--cake-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(30, 10, 20, 0.98) 0%,
+    rgba(160, 40, 80, 0.92) 40%,
+    rgba(220, 80, 120, 0.85) 70%,
+    rgba(50, 10, 30, 0.98) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.client-card-img--cake-placeholder::before {
+  content: "🎂";
+  position: absolute;
+  font-size: 56px;
+  opacity: 0.15;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.cake-placeholder-label {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 160, 180, 0.9);
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 0 16px rgba(220, 80, 120, 0.6);
+}
+
+/* Anil Mehendi Art placeholder thumbnail */
+.client-card-img--mehndi-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 20, 5, 0.98) 0%,
+    rgba(40, 100, 20, 0.92) 40%,
+    rgba(60, 140, 30, 0.85) 70%,
+    rgba(10, 30, 5, 0.98) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.client-card-img--mehndi-placeholder::before {
+  content: "✿";
+  position: absolute;
+  font-size: 64px;
+  opacity: 0.1;
+  color: #6fbe44;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.mehndi-placeholder-label {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(130, 210, 80, 0.9);
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 0 16px rgba(60, 140, 30, 0.6);
 }
 
 /* SKILLS */
@@ -1491,15 +1637,16 @@
 .reviews-slider-outer {
   overflow: hidden;
   position: relative;
-  width: 100%;
-  margin: 0 -90px;
-  padding: 0 90px;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 0;
 }
 
 @media (max-width: 900px) {
   .reviews-slider-outer {
-    margin: 0 -28px;
-    padding: 0 28px;
+    /* full-width breakout is handled via 100vw — no override needed */
   }
 }
 
@@ -1893,12 +2040,8 @@
     gap: 18px;
   }
 
-  .client-cards-row {
-    gap: 12px;
-  }
-
-  .client-card {
-    width: 240px;
+  .client-card--carousel {
+    width: 200px;
   }
 
   .pricing-card {
@@ -1926,9 +2069,8 @@
     max-width: 100%;
   }
 
-  .client-card {
-    width: 100%;
-    max-width: 340px;
+  .client-card--carousel {
+    width: 180px;
   }
 }
 
