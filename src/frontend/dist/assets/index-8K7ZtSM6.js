@@ -35381,12 +35381,12 @@ const featureBundle = {
 };
 const motion = /* @__PURE__ */ createMotionProxy(featureBundle, createDomVisualElement);
 const FOLLOW_IMAGES = [
-  "/assets/whatsapp_image_2026-05-02_at_11.10.27_am-019e0d04-112e-747e-b60e-a8da97529792.jpeg",
-  "/assets/72hrs_in_bangkok-019e0d04-1377-730c-b34f-a7f254de1c9b.webp",
-  "/assets/whatsapp_image_2026-04-24_at_2.31.14_pm-019e0d04-177a-722c-a9c6-3651d54345da.jpeg",
-  "/assets/kolkata_diaries_09-02-019e0d04-191f-70d4-9bb8-618a408abc68.jpg",
-  "/assets/655173678_18076167986572189_7800662887643349128_n-019e0d04-1b9a-714f-a9b0-2ade6091c975.jpg",
-  "/assets/whatsapp_image_2026-04-21_at_1.57.59_pm-019e0d04-1c6c-7276-98cf-8b1e4e425df0.jpeg"
+  "/assets/whatsapp_image_2026-05-02_at_11.10.27_am-019e30ee-b88a-71c3-8d74-7324a8dd4180.jpeg",
+  "/assets/72hrs_in_bangkok-019e30ee-b8a0-7039-9496-51ff418802a9.webp",
+  "/assets/kolkata_diaries_09-02-019e30ee-bb2a-777d-a555-e3c7c33f8c11.jpg",
+  "/assets/655173678_18076167986572189_7800662887643349128_n-019e30ee-bc0d-720c-addd-d496a0864052.jpg",
+  "/assets/whatsapp_image_2026-04-24_at_2.31.14_pm-019e30ee-bd45-737f-958f-e0a1ad9c3d25.jpeg",
+  "/assets/whatsapp_image_2026-04-21_at_1.57.59_pm-019e30ee-c0d7-768a-bc29-817ea8d783f0.jpeg"
 ];
 function FollowEffectSection({
   onScrollToWork
@@ -35617,7 +35617,7 @@ const PLANS = {
       "Subdomain (example: yourname.mywebsite.com)"
     ],
     excluded: ["No Custom Domain", "No Maintenance"],
-    price: "₹1,999/-",
+    price: "₹3,999/-",
     waLink: "https://wa.me/919692504800?text=Hi%2C%20I%27m%20interested%20in%20the%20Starter%20Plan%20(Basic)%20for%20my%20website.%20Please%20share%20more%20details!"
   },
   plus: {
@@ -36472,20 +36472,11 @@ function App() {
                 },
                 {
                   img: null,
-                  imgClass: "client-card-img--copper-placeholder",
-                  title: "Hot Copper Studio",
-                  tag: "Web Design",
-                  href: "https://hot-copper-rfv-draft.caffeine.xyz",
-                  ocid: "work.item.4",
-                  placeholder: "copper"
-                },
-                {
-                  img: null,
                   imgClass: "client-card-img--cake-placeholder",
                   title: "Cake & Bake",
                   tag: "Web Design",
                   href: "https://cakeandbake-nt2.caffeine.xyz",
-                  ocid: "work.item.5",
+                  ocid: "work.item.4",
                   placeholder: "cake"
                 },
                 {
@@ -36494,8 +36485,26 @@ function App() {
                   title: "Anil Mehendi Art",
                   tag: "Web Design",
                   href: "https://www.anilmehndiart.com",
-                  ocid: "work.item.6",
+                  ocid: "work.item.5",
                   placeholder: "mehndi"
+                },
+                {
+                  img: "/assets/untitled_design-019e30ee-bac5-7094-8544-eb9a91cac5e0.jpg",
+                  imgClass: "client-card-img--logo",
+                  title: "Addi Photography",
+                  tag: "Web Design",
+                  href: "https://www.addiphotography.co.in/",
+                  ocid: "work.item.6",
+                  placeholder: null
+                },
+                {
+                  img: "/assets/img_0176_1-019e30ee-c375-7409-acce-5abfc202a3c1.png",
+                  imgClass: "client-card-img--logo",
+                  title: "Badhai Ho Films",
+                  tag: "Web Design",
+                  href: "https://www.badhaihofilms.com/",
+                  ocid: "work.item.7",
+                  placeholder: null
                 },
                 // Duplicate set for seamless loop
                 ...[
@@ -36527,20 +36536,11 @@ function App() {
                   },
                   {
                     img: null,
-                    imgClass: "client-card-img--copper-placeholder",
-                    title: "Hot Copper Studio",
-                    tag: "Web Design",
-                    href: "https://hot-copper-rfv-draft.caffeine.xyz",
-                    ocid: "work.item.4",
-                    placeholder: "copper"
-                  },
-                  {
-                    img: null,
                     imgClass: "client-card-img--cake-placeholder",
                     title: "Cake & Bake",
                     tag: "Web Design",
                     href: "https://cakeandbake-nt2.caffeine.xyz",
-                    ocid: "work.item.5",
+                    ocid: "work.item.4",
                     placeholder: "cake"
                   },
                   {
@@ -36549,8 +36549,26 @@ function App() {
                     title: "Anil Mehendi Art",
                     tag: "Web Design",
                     href: "https://www.anilmehndiart.com",
-                    ocid: "work.item.6",
+                    ocid: "work.item.5",
                     placeholder: "mehndi"
+                  },
+                  {
+                    img: "/assets/untitled_design-019e30ee-bac5-7094-8544-eb9a91cac5e0.jpg",
+                    imgClass: "client-card-img--logo",
+                    title: "Addi Photography",
+                    tag: "Web Design",
+                    href: "https://www.addiphotography.co.in/",
+                    ocid: "work.item.6",
+                    placeholder: null
+                  },
+                  {
+                    img: "/assets/img_0176_1-019e30ee-c375-7409-acce-5abfc202a3c1.png",
+                    imgClass: "client-card-img--logo",
+                    title: "Badhai Ho Films",
+                    tag: "Web Design",
+                    href: "https://www.badhaihofilms.com/",
+                    ocid: "work.item.7",
+                    placeholder: null
                   }
                 ]
               ].map((project, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
